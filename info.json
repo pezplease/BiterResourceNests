@@ -1,0 +1,9 @@
+{
+    "name": "BiterResourceNests",
+    "version": "0.1.1",
+    "title": "Biter Resource Nests",
+    "author": "PezPlease",
+    "factorio_version": "2.0",
+    "dependencies": ["base >= 2.0"],
+    "description": "Each resource Patch outside of the starting zone has an underground biter nest in it. In order to harvest the resources the nest must be wiped out. Nests get stronger with the size and type of the resource, as well as pollution."
+  }
