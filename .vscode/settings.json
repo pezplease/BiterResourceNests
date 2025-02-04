@@ -1,0 +1,13 @@
+{
+    "Lua.diagnostics.globals": [
+        "script",
+        "storage",
+        "defines",
+        "game",
+        "settings",
+        "data"
+    ],
+    "Lua.diagnostics.disable": [
+        "undefined-field"
+    ]
+}

@@ -1,21 +1,35 @@
 script.on_init(function()
   storage.spawned_nests = {}
   storage.last_biter_kill = 0
-  storage.starting_patches = {
-    ["iron-ore"] = 1,
-    ["copper-ore"] = 1,
-    ["coal"] = 1,
-    ["stone"] = 1,
-  }
+
+  --add any resources here that you want to not have a nest spawn the first time it's encountered
+  --higher numbers means more than one patch will be avoided
   storage.patches_to_remove = {
     ["iron-ore"] = 1,
     ["copper-ore"] = 1,
     ["coal"] = 1,
     ["stone"] = 1,
+    --["uranium-ore"] = 1,
+    --["crude-oil"] = 1
   }
-  storage.remove_patches = true
+  storage.remove_patches = settings.startup["starting-resource-exemption"].value
+  removenormalnests()
 end)
 
+function removenormalnests()
+  local surface = game.surfaces["nauvis"]
+
+  if settings.startup["remove-normal-nests"].value then
+    game.print("Removing normal nests")
+    local map_settings = surface.map_gen_settings
+    map_settings.autoplace_controls["enemy-base"] = { frequency = "none", size = "none", richness = "none" }
+    surface.map_gen_settings = map_settings
+  for _, entity in pairs(surface.find_entities_filtered { type = { "unit", "unit-spawner", "turret" } }) do
+    entity.destroy()
+  end
+
+  end
+end
 
 local function position_key(position)
   -- Helper to create a unique key for a position
@@ -62,7 +76,6 @@ end
 script.on_event(defines.events.on_chunk_generated, function(event)
   local surface = event.surface
   local area = event.area
-  local settings_enabled = false --settings.storage["starting-resource-spawners"].value
 
   -- Find all resources in the chunk
   local resource_entities = surface.find_entities_filtered({
@@ -93,34 +106,16 @@ script.on_event(defines.events.on_chunk_generated, function(event)
         center_x = center_x / #patch_resources
         center_y = center_y / #patch_resources
 
-        -- Skip the first starting resource patches
-        local resource_name = resource.name
-        --checks if this is the first time the resource has been encountered
-        --[[
-        if storage.starting_patches[resource_name] and storage.starting_patches[resource_name] > 0
-        then
-          storage.starting_patches[resource_name] = storage.starting_patches[resource_name] - 1
-          --debug steel chest, lol
-          surface.create_entity({
-            name = "steel-chest",
-            position = {x = center_x, y = center_y},
-          })
-        else
-          --]]
         -- Scale strength based on patch size
         local patch_size = #patch_resources -- Ensure this variable is set
         local nest_type
-        if patch_size > 300 then
-          nest_type = "self-damaging-spawner"
-        else
-          nest_type = "self-damaging-spawner"
-        end
+        nest_type = "inactive-biter-spawner-" .. resource.name
 
         local spawned_nest = surface.create_entity({
           name = nest_type,
           position = { x = center_x, y = center_y },
           force = "enemy", -- Makes it hostile
-          active = false
+          
         })
         --game.print("Nest spawned at " .. center_x .. ", " .. center_y)
         if storage.remove_patches and spawned_nest then
@@ -135,7 +130,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
       end
     end
   end
-
+  deleteallstartingnests()
 end)
 
 script.on_event(defines.events.on_entity_spawned, function(event)
@@ -144,82 +139,35 @@ script.on_event(defines.events.on_entity_spawned, function(event)
 
   if entityspawned.type == "unit" then
     if spawner and spawner.valid and spawner.name == "self-damaging-spawner" then
-      local damage_amount = 30 -- Adjust the damage as needed
+      local damage_amount = 132 -- Adjust the damage as needed
       spawner.damage(damage_amount, spawner.force)
     end
   end
 end)
 
 
-
 script.on_event(defines.events.on_player_mined_entity, function(event)
   local entity = event.entity
   --if entity and entity.name == "resource-name" then
   local nests = entity.surface.find_entities_filtered {
-    name = "self-damaging-spawner",
+    name = "inactive-biter-spawner-" .. entity.name,
     position = entity.position,
-    radius = 32
+    radius = 62
   }
   for _, nest in pairs(nests) do
-    nest.active = true
+    if not nest.valid then return end
+    --nest.force = game.forces.enemy
+    --local spawned_nest = surface.create_entity({
+    --  name = "self-damaging-spawner",
+    --  position = { x = nest.entity.position.x, y = nest.entity.position.y },
+    --  force = "enemy", -- Makes it hostile
+      
+    --})
   end
 end)
-script.on_nth_tick(250, function()
-  --deletestartingnests()
+script.on_nth_tick(450, function()
   deleteallstartingnests()
 end)
-
-function deletestartingnests()
-  if not storage.spawned_nests or not storage.remove_patches then return end
-  local closest_nests = {}
-  game.print("nest amount: " .. #storage.spawned_nests)
-  for _, nest_info in pairs(storage.spawned_nests) do
-    for resource_name, _ in pairs(storage.patches_to_remove) do
-      if storage.patches_to_remove[resource_name] < 1 then break end
-      local current_closest
-      if nest_info.resource_name == resource_name then
-        if not current_closest then
-          current_closest = nest_info
-        else
-          if nest_info.distance < current_closest.distance then
-            current_closest = nest_info
-          end
-        end
-      end
-      game.print("about to delete nest type: " .. resource_name)
-      if current_closest then
-        game.print("current closest entity exists")
-        if current_closest.entity and current_closest.entity.valid then
-          --game.print("current closest entity is valid")
-          local radius = 33
-          local surface = game.surfaces["nauvis"]
-          game.print("The closest nest to the center is: " .. current_closest.distance)
-          game.forces["player"].add_chart_tag(surface, {
-            position = { x = current_closest.nest_x, y = current_closest.nest_y },
-            text = "Center Nest",
-            icon = { type = "item", name = "raw-fish" } -- Change icon if needed
-          })
-          local nests_to_remove = surface.find_entities_filtered({
-            area = {
-              { current_closest.entity.position.x - radius, current_closest.entity.position.y - radius },
-              { current_closest.entity.position.x + radius, current_closest.entity.position.y + radius }
-            },
-            type = { "unit-spawner" }
-          })
-          game.print("the amount of nests to remove is: " .. #nests_to_remove)
-          for _, nest in pairs(nests_to_remove) do
-            nest.destroy()
-
-            storage.patches_to_remove[resource_name] = storage.patches_to_remove[resource_name] - 1
-            game.print("deleted nest")
-          end
-        else
-          game.print("current closest entity is not valid")
-        end
-      end
-    end
-  end
-end
 
 function deleteallstartingnests()
   if not storage.spawned_nests or not storage.remove_patches then return end
@@ -299,11 +247,13 @@ end)
 function give_player_starter_items(player)
   -- Ensure the player has car and nuclear fuel in their inventory
   local surface = game.surfaces["nauvis"]
-  local car = player.surface.create_entity{
+  local car = player.surface.create_entity {
     name = "car",
     position = player.position,
     force = player.force
-}
-car.insert{name = "nuclear-fuel", count = 5} -- Add fuel to the car
-player.print("You have received a car with nuclear fuel!")
+  }
+  car.insert { name = "nuclear-fuel", count = 5 } -- Add fuel to the car
+  player.print("You have received a car with nuclear fuel!")
+  car.insert { name = "gun-turret", count = 50 }
+  car.insert { name = "firearm-magazine", count = 2000 }
 end
