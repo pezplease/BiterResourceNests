@@ -121,7 +121,14 @@ script.on_event(defines.events.on_chunk_generated, function(event)
             break
           end
         end
-        local spawned_nest = surface.create_entity({
+        local surface = game.surfaces["nauvis"]
+        local nearbyresourcenests = surface.find_entities_filtered {
+          name = nest_type,
+          position = {x = center_x, y = center_y},
+          radius = 8
+        }
+        if #nearbyresourcenests == 0 then
+                  local spawned_nest = surface.create_entity({
           name = nest_type,
           position = { x = center_x, y = center_y },
           force = "enemy", -- Makes it hostile
@@ -136,6 +143,8 @@ script.on_event(defines.events.on_chunk_generated, function(event)
             nest_y = center_y,
             nest_x = center_x
           })
+        end
+
         end
       end
     end
@@ -153,7 +162,7 @@ script.on_event(defines.events.on_entity_spawned, function(event)
 
     --deals damage to either active or inactive nests. #todo make dealing damage to inactive nests active.
     if spawner and spawner.valid and string.find(spawner.name, "active%-biter%-spawner") then
-      local damage_amount = 50 -- Adjust the damage as needed
+      local damage_amount = 100 -- Adjust the damage as needed
       --game.print("Damage dealt to nest")
       spawner.damage(damage_amount, spawner.force)
       for i, nest_info in pairs(storage.active_nests) do
@@ -238,12 +247,12 @@ function activate_nest(nest, resource_mined)
   })
 
   local activate_particles = "ground-explosion"
-  if resource_mined == "coal" then
-    activate_particles = "ground-explosion"
-  elseif
-      resource_mined == "copper-ore" then
-    activate_particles = "poison-cloud"
-  end
+  --if resource_mined == "coal" then
+  --  activate_particles = "ground-explosion"
+  --elseif
+  --    resource_mined == "copper-ore" then
+  --  activate_particles = "poison-cloud"
+ -- end
   surface.create_entity({
     name = activate_particles,
     position = nest.position,
@@ -343,5 +352,6 @@ function give_player_starter_items(player)
   car.insert { name = "nuclear-fuel", count = 5 } -- Add fuel to the car
   player.print("You have received a car with nuclear fuel!")
   car.insert { name = "gun-turret", count = 50 }
-  car.insert { name = "firearm-magazine", count = 2000 }
+  car.insert { name = "firearm-magazine", count = 3000 }
+  car.insert { name = "uranium-rounds-magazine", count = 1000 }
 end
