@@ -20,7 +20,7 @@ local resource_types = {
   "iron-ore",
   "copper-ore",
   "coal",
-  --"stone",
+  "stone",
   "uranium-ore",
   "crude-oil"
 }
