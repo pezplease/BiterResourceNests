@@ -53,162 +53,7 @@ function create_resistance_table(physdec, physperc, expdec, expperc, aciddec, ac
   return resistance_list
 end
 
-function specilized_biter_results(resource_type)
-  biter_units = {
-    {
-      resource_type .. "-" .. "small-biter",
-      {
-        {
-          0,
-          0.3
-        },
-        {
-          0.6,
-          0
-        }
-      }
-    },
-    {
-      resource_type .. "-" .. "medium-biter",
-      {
-        {
-          0,
-          .1
-        },
-        {
-          0.6,
-          0.3
-        },
-        {
-          0.7,
-          0.1
-        }
-      }
-    },
-    {
-      resource_type .. "-" .. "big-biter",
-      {
-        {
-          0.2,
-          0
-        },
-        {
-          1,
-          0.4
-        }
-      }
-    },
-    {
-      resource_type .. "-" .. "behemoth-biter",
-      {
-        {
-          0.85,
-          0
-        },
-        {
-          1,
-          0.3
-        }
-      }
-    }
-  }
-  return biter_units
-end
-function specilized_spitter_results(resource_type)
-spitter_units = {
-  {
-    resource_type .. "-" .. "small-biter",
-    {
-      {
-        0,
-        0.3
-      },
-      {
-        0.35,
-        0
-      }
-    }
-  },
-  {
-    resource_type .. "-" .. "small-spitter",
-    {
-      {
-        0,
-        0.3
-      },
-      {
-        0.35,
-        0.1
-      },
-      {
-        0.6,
-        0
-      }
-    }
-  },
-  {
-    resource_type .. "-" .. "medium-spitter",
-    {
-      {
-        0.2,
-        0.2
-      },
-      {
-        0.7,
-        0.3
-      },
-      {
-        0.9,
-        0.1
-      }
-    }
-  },
-  {
-    resource_type .. "-" .. "big-spitter",
-    {
-      {
-        0.2,
-        0.05
-      },
-      {
-        1,
-        0.4
-      }
-    }
-  },
-  {
-    resource_type .. "-" .. "big-biter",
-    {
-      {
-        0.2,
-        0.01
-      },
-      {
-        1,
-        0.4
-      }
-    }
-  },
-  {
-    resource_type .. "-" .. "behemoth-spitter",
-    {
-      {
-        0.75,
-        0
-      },
-      {
-        1,
-        0.1
-      }
-    }
-  }
-}
-return spitter_units
-end
-
 --default biter values
-local default_biter_multiplier = 3
-local default_biter_speed = 0.5
 
 local base_small_biter = table.deepcopy(data.raw["unit"]["small-biter"])
 local base_medium_biter = table.deepcopy(data.raw["unit"]["medium-biter"])
@@ -218,42 +63,54 @@ local base_small_spitter = table.deepcopy(data.raw["unit"]["small-spitter"])
 local base_medium_spitter = table.deepcopy(data.raw["unit"]["medium-spitter"])
 local base_big_spitter = table.deepcopy(data.raw["unit"]["big-spitter"])
 local base_behemoth_spitter = table.deepcopy(data.raw["unit"]["behemoth-spitter"])
-local biter_list = {
-  "small-biter",
-  "medium-biter",
-  "big-biter",
-  "behemoth-biter",
-}
-local spitter_list = {
-  "small-biter",
-  "medium-biter",
-  "big-biter",
-  "behemoth-biter",
 
-  "small-spitter",
-  "medium-spitter",
-  "big-spitter",
-  "behemoth-spitter",
-}
+--gets unique biter stats from biter-data.lua
+function unique_biter_stats(stat_name, resource_name)
+  local overrides = biter_overrides[resource_name]
+  local stat
+  if not overrides then
+    resource_name = "generic"
+    overrides = biter_overrides[resource_name]
+  end
+  if not overrides[stat_name] then
+    stat = biter_overrides["generic"][stat_name]
+  end
+  stat = overrides[stat_name]
+  return stat
+end
 
 function setup_resource_biters(resource_list)
   local resource_biters = {}
   for _, resource_name in pairs(resource_list) do
-    local spawner_list = {}
-    if resource_name == "copper-ore" then
-      spawner_list = spitter_list
-    else
-      spawner_list = biter_list
+    local spawner_list = biter_list
+    for res_types, unit_list in pairs(resource_units) do
+      if res_types == resource_name then
+        spawner_list = unit_list
+      end
     end
+
+    local health_multiplier = unique_biter_stats("health_multiplier", resource_name)
+    local speed_multiplier = unique_biter_stats("speed_multiplier", resource_name)
+    local damage_multiplier = unique_biter_stats("damage_multiplier", resource_name)
+
+    --stat_overrides = unique_biter_stats("generic")
+    --stat_overrides = unique_biter_stats(resource_name)
     for _, biter_name in pairs(spawner_list) do
       local biter = table.deepcopy(data.raw["unit"][biter_name])
       biter.name = resource_name .. "-" .. biter_name
       biter.order = "y-" .. resource_name .. "-y" .. biter_name
-      biter.max_health = biter.max_health * default_biter_multiplier
-      biter.movement_speed = biter.movement_speed * default_biter_speed
+      biter.max_health = biter.max_health * health_multiplier
+      biter.movement_speed = biter.movement_speed * speed_multiplier
+
+
+      --Tint the biters in factoriopedia simulation to match the resource color
       biter.factoriopedia_simulation = {
-        init = "    game.simulation.camera_zoom = 1.8\n    game.simulation.camera_position = {0, 0}\n    game.surfaces[1].build_checkerboard{{-40, -40}, {40, 40}}\n    enemy = game.surfaces[1].create_entity{name = \"" .. biter.name .. "\", position = {0, 0}}\n\n    step_0 = function()\n      game.simulation.camera_position = {enemy.position.x, enemy.position.y - 0.5}\n      script.on_nth_tick(1, function()\n          step_0()\n      end)\n    end\n\n    step_0()\n  "
+        init =
+            "    game.simulation.camera_zoom = 1.8\n    game.simulation.camera_position = {0, 0}\n    game.surfaces[1].build_checkerboard{{-40, -40}, {40, 40}}\n    enemy = game.surfaces[1].create_entity{name = \"" ..
+            biter.name ..
+            "\", position = {0, 0}}\n\n    step_0 = function()\n      game.simulation.camera_position = {enemy.position.x, enemy.position.y - 0.5}\n      script.on_nth_tick(1, function()\n          step_0()\n      end)\n    end\n\n    step_0()\n  "
       }
+      --tint the biters to match the resource color
       for res_name, resource_colors in pairs(resource_colors) do
         if resource_name == res_name then
           biter.icons = {
@@ -264,23 +121,23 @@ function setup_resource_biters(resource_list)
             },
           }
           if biter.run_animation then
-            for _, layer in pairs(biter.run_animation.layers or {biter.run_animation}) do
-                layer.tint = resource_colors
-                if layer.hr_version then
-                    layer.hr_version.tint = resource_colors
-                end
-                --layer.hd_version.tint = resource_colors
+            for _, layer in pairs(biter.run_animation.layers or { biter.run_animation }) do
+              layer.tint = resource_colors
+              if layer.hr_version then
+                layer.hr_version.tint = resource_colors
+              end
+              --layer.hd_version.tint = resource_colors
             end
-        end
-    
-        if biter.attack_parameters and biter.attack_parameters.animation then
-            for _, layer in pairs(biter.attack_parameters.animation.layers or {biter.attack_parameters.animation}) do
-                layer.tint = resource_colors
-                if layer.hr_version then
-                    layer.hr_version.tint = resource_colors
-                end
+          end
+
+          if biter.attack_parameters and biter.attack_parameters.animation then
+            for _, layer in pairs(biter.attack_parameters.animation.layers or { biter.attack_parameters.animation }) do
+              layer.tint = resource_colors
+              if layer.hr_version then
+                layer.hr_version.tint = resource_colors
+              end
             end
-        end
+          end
         end
       end
       table.insert(resource_biters, biter)
@@ -288,6 +145,18 @@ function setup_resource_biters(resource_list)
   end
 
   data:extend(resource_biters)
+end
+
+--sets the unique stats for each resource nest by looking
+-- into biter-data.lua and reads the resource_overrides table
+function unique_resource_stats(resource, nest_type)
+  local overrides = resource_overrides[resource]
+  if not overrides then
+    return
+  end
+  for key, value in pairs(overrides) do
+    nest_type[key] = value
+  end
 end
 
 --default active values
@@ -302,6 +171,18 @@ local default_inactive_max_count_of_owned_units = 0
 local default_inactive_max_count_defensive_units = 0
 
 
+
+function set_unit_spawners(resource_name)
+  local result_units = specilized_biter_results(resource_name)
+  for resource, _ in pairs(resource_units) do
+    if resource == resource_name then
+      result_units = specilized_spitter_results(resource_name)
+      return result_units
+    end
+  end
+  return result_units
+end
+
 local generic_spawner = table.deepcopy(data.raw["unit-spawner"]["biter-spawner"])
 generic_spawner.name = "base-resource-spawner"
 data.raw["unit-spawner"]["base-resource-spawner"] = generic_spawner
@@ -310,6 +191,7 @@ data:extend({ generic_spawner })
 function setup_resource_nests(resource_list)
   local resourcespawners = {}
   for _, resource_name in pairs(resource_list) do
+    --local units = set_unit_spawners(resource_name)
     local inactive_spawner = table.deepcopy(generic_spawner)
     inactive_spawner.name = "inactive-biter-spawner-" .. resource_name
     inactive_spawner.max_health = default_nest_health
@@ -317,7 +199,7 @@ function setup_resource_nests(resource_list)
     inactive_spawner.spawning_cooldown = default_inactive_nest_cooldown
     inactive_spawner.max_count_of_owned_defensive_units = default_inactive_max_count_defensive_units
     inactive_spawner.resistances = default_resistances
-    inactive_spawner.result_units = specilized_biter_results(resource_name)
+    inactive_spawner.result_units = set_unit_spawners(resource_name)
     inactive_spawner.order = "y-" .. resource_name .. "-zc"
     local active_spawner = table.deepcopy(generic_spawner)
     active_spawner.name = "active-biter-spawner-" .. resource_name
@@ -325,18 +207,11 @@ function setup_resource_nests(resource_list)
     active_spawner.spawning_cooldown = default_active_nest_cooldown
     active_spawner.max_count_of_owned_units = default_active_max_count_of_owned_units
     active_spawner.resistances = default_resistances
-    active_spawner.result_units = specilized_biter_results(resource_name)
+    active_spawner.result_units = set_unit_spawners(resource_name)
     active_spawner.order = "y-" .. resource_name .. "-zb"
     --override default resource settings
-    if resource_name == "crude-oil" then
-      inactive_spawner.max_health = 1000
-      active_spawner.max_health = 1000
-      active_spawner.default_active_nest_cooldown = { 50, 60 }
-      active_spawner.max_count_of_owned_units = 20
-    elseif resource_name == "copper-ore" then
-      inactive_spawner.result_units = specilized_spitter_results(resource_name)
-      active_spawner.result_units = specilized_spitter_results(resource_name)
-    end
+    unique_resource_stats(resource_name, active_spawner)
+    unique_resource_stats(resource_name, inactive_spawner)
     -- Set the tint for the spawner
     for res_name, resource_colors in pairs(resource_colors) do
       if resource_name == res_name then
