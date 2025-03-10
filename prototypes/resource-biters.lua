@@ -1,4 +1,5 @@
 require "prototypes.biter-data"
+require "prototypes.spitter-effects"
 
 local inactive_nest = table.deepcopy(data.raw["unit-spawner"]["biter-spawner"])
 inactive_nest.name = "inactive-spawner"
@@ -102,6 +103,33 @@ function setup_resource_biters(resource_list)
       biter.max_health = biter.max_health * health_multiplier
       biter.movement_speed = biter.movement_speed * speed_multiplier
 
+
+      --set damage
+      if string.find(biter_name, "biter") then
+        if biter.attack_parameters and biter.attack_parameters.ammo_type then
+          --set the new damage value
+          local new_damage = biter.attack_parameters.ammo_type.action.action_delivery.target_effects.damage.amount * damage_multiplier
+          biter.attack_parameters.ammo_type.action.action_delivery.target_effects = {
+            {
+              type = "damage",
+              damage = { amount = new_damage, type = "physical" }   -- Change damage type if needed
+            }
+          }
+        end
+      elseif string.find(biter_name, "spitter") then
+        local new_damage = 55 --biter.attack_parameters.ammo_type.action.action_delivery.target_effects.damage.amount * damage_multiplier
+        if biter.attack_parameters and biter.attack_parameters.ammo_type then
+          -- Modify spitter projectile damage
+          biter.attack_parameters.ammo_type.action.action_delivery.projectile = "acid-projectile-purple"
+          biter.attack_parameters.range = 35
+          biter.attack_parameters.ammo_type.action.action_delivery.target_effects = {
+            {
+              type = "damage",
+              damage = { amount = new_damage, type = "acid" }
+            }
+          }
+        end
+      end
 
       --Tint the biters in factoriopedia simulation to match the resource color
       biter.factoriopedia_simulation = {
