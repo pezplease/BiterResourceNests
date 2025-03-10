@@ -8,14 +8,13 @@ require "prototypes.resource-biters"
 --  end
 --})
 
---creates the data for the biters and nests
-add_res_list_to_table(resource_list)
+
 
 
 --setup all biter types for each resource, with a generic fallback nest
-setup_resource_biters(resource_types)
-setup_resource_biters(default_nest)
+setup_resource_biters(resource_list)
+--setup_resource_biters(default_nest)
 
 --setup all resource nests for each resource, with a generic fallback nest
-setup_resource_nests(resource_types)
-setup_resource_nests(default_nest)
+setup_resource_nests(resource_list)
+--setup_resource_nests(default_nest)

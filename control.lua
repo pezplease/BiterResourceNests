@@ -81,8 +81,11 @@ script.on_event(defines.events.on_chunk_generated, function(event)
 
         -- Scale strength based on patch size
         local patch_size = #patch_resources -- Ensure this variable is set
-        local nest_type = "inactive-biter-spawner-generic-nest"
-        for _, resource_table in pairs(resource_types) do
+
+      --checks to make sure the nests have sufficient spacing
+        local nest_type = "inactive-biter-spawner-generic"
+        for _, resource_table_data in pairs(resource_list) do
+          local resource_table = resource_table_data.name
           if resource_table == resource.name then
             nest_type = "inactive-biter-spawner-" .. resource.name
             break
@@ -92,7 +95,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
         local nearbyresourcenests = surface.find_entities_filtered {
           name = nest_type,
           position = {x = center_x, y = center_y},
-          radius = 8
+          radius = 12
         }
         if #nearbyresourcenests == 0 then
                   local spawned_nest = surface.create_entity({
@@ -146,9 +149,10 @@ end)
 --checks if a player mines a resource patch.
 script.on_event(defines.events.on_player_mined_entity, function(event)
   local entity = event.entity
-  local nest_type = "generic-nest"
+  local nest_type = "generic"
   game.print("Entity mined: " .. entity.name)
-  for _, resource_check in pairs(resource_types) do
+  for _, resource_check_data in pairs(resource_list) do
+    local resource_check = resource_check_data.name
     if resource_check == entity.name then
       nest_type = entity.name
       break
@@ -197,9 +201,10 @@ end
 function activate_nest(nest, resource_mined)
   game.print("Nest activate function called")
   if not nest or not nest.valid then return end
-  local active_nest_name = "active-biter-spawner-generic-nest"
+  local active_nest_name = "active-biter-spawner-generic"
   -- Change the spawner to the active version
-  for _, resource_table in pairs(resource_types) do
+  for _, resource_table_data in pairs(resource_list) do
+    local resource_table = resource_table_data.name
     if resource_table == resource_mined then
       active_nest_name = "active-biter-spawner-" .. resource_mined
       break
