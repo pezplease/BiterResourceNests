@@ -126,7 +126,7 @@ function specilized_spitter_results(resource_type)
             resource_type .. "-" .. "big-biter",
             {
                 {
-                    0.2,
+                    0.25,
                     0.01
                 },
                 {
@@ -144,7 +144,7 @@ function specilized_spitter_results(resource_type)
                 },
                 {
                     1,
-                    0.1
+                    0.15
                 }
             }
         }
@@ -177,7 +177,7 @@ resource_colors = {
     ["iron-ore"] = { r = 0.45, g = 0.6, b = 0.9, a = 1 },
     ["copper-ore"] = { r = 0.803, g = 0.388, b = 0.215, a = 1 },
     ["coal"] = { r = 0.2, g = 0.2, b = 0.2, a = 1 },
-    ["stone"] = { r = 0.95, g = 0.8, b = 0.7, a = 1 },
+    ["stone"] = { r = 0.95, g = 0.85, b = 0.75, a = 1 },
     ["uranium-ore"] = { r = 0.25, g = 0.91, b = 0.25, a = 1 },
     ["crude-oil"] = { r = 0.89, g = 0.349, b = 0.588, a = 1 }
 }
@@ -220,6 +220,127 @@ biter_overrides = {
     },
     ["stone"] = {
         health_multiplier = 3,
-        speed_multiplier = .3
+        speed_multiplier = .3,
+        damage_multiplier = 4
     }
 }
+
+generic_spawner_data = {
+    color_data = {
+        { r = 0.3, g = 0.3, b = 0.3, a = 1 }
+    },
+    biter_data = {
+        health_multiplier = 1.5,
+        speed_multiplier = 0.75,
+        damage_multiplier = 1.25,
+    },
+    nest_overrides = {
+        max_health = 10000,
+        spawning_cooldown = { 2, 3 },
+    },
+    resistance_data =
+    {
+        physdec = 10,
+        physperc = 40,
+        expdec = 0,
+        expperc = 30,
+        aciddec = 0,
+        acidperc = 30,
+        firedec = 0,
+        fireperc = 30,
+        laserdec = 0,
+        laserperc = 30,
+        elecdec = 0,
+        elecperc = 30,
+        poisdec = 0,
+        poisperc = 30,
+        impdec = 0,
+        impperc = 30
+    }
+}
+function create_biter_template(resource_name, overrides)
+    local function deep_copy(original)
+        local copy = {}
+        for k, v in pairs(original) do
+            if type(v) == "table" then
+                copy[k] = deep_copy(v)
+            else
+                copy[k] = v
+            end
+        end
+        return copy
+    end
+    local template = deep_copy(generic_spawner_data)
+    if overrides then
+        for k, v in pairs(overrides) do
+            if type(v) == "table" and type(template[k]) == "table" then
+                for sub_k, sub_v in pairs(v) do
+                    template[k][sub_k] = sub_v -- Override only specific sub-keys
+                end
+            else
+                template[k] = v -- Override full values
+            end
+        end
+    end
+
+    return template
+end
+
+resource_list = {
+    
+    ["iron-ore"] = create_biter_template("iron-ore",
+        {
+            biter_data = { health_multiplier = 1.8, speed_multiplier = 0.7 },
+            color_data = { { r = 0.45, g = 0.6, b = 0.9, a = 1 } }
+        }),
+
+        ["generic"] = create_biter_template("generic",
+        {
+            color_data = {
+                { r = 0.3, g = 0.3, b = 0.3, a = 1 }
+            },
+            biter_data = {
+                health_multiplier = 1.5,
+                speed_multiplier = 0.75,
+                damage_multiplier = 1.25,
+            },
+            name_data = "generic",
+            nest_overrides = {
+                max_health = 10000,
+                spawning_cooldown = { 2, 3 },
+            },
+            resistance_data =
+            {
+                physdec = 10,
+                physperc = 40,
+                expdec = 0,
+                expperc = 30,
+                aciddec = 0,
+                acidperc = 30,
+                firedec = 0,
+                fireperc = 30,
+                laserdec = 0,
+                laserperc = 30,
+                elecdec = 0,
+                elecperc = 30,
+                poisdec = 0,
+                poisperc = 30,
+                impdec = 0,
+                impperc = 30
+            }
+        })
+
+    
+}
+function add_res_list_to_table(simple_resource_list)
+    for _, res_name in pairs(simple_resource_list) do
+     table.insert(resource_list, {
+        [res_name] = create_biter_template(res_name,
+        {
+            
+            color_data = { { r = 0.85, g = 0.8, b = 0.9, a = 1 } }
+        }),
+     })
+        
+    end
+end
