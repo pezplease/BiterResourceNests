@@ -180,14 +180,15 @@ generic_spawner_data = {
     },
     biter_data = {
         health_multiplier = 1.5,
-        speed_multiplier = 0.75,
-        damage_multiplier = 1.25,
+        speed_multiplier = 0.85,
+        damage_multiplier = 1.15,
     },
     unit_types = biter_list,
     spawner_data = {
         max_health = 10000,
         spawning_cooldown = { 2, 3 },
         max_units = 50,
+        corpse = "atomic-nuke-shockwave"
     },
     resistance_data =
     {
@@ -251,24 +252,59 @@ resource_list = {
         name = "copper-ore",
         unit_types = spitter_list,
         color_data = { r = 0.803, g = 0.388, b = 0.215, a = 1 },
-        --color_data = {}
+        resistance_data = {
+            acidperc = 80,
+            poisperc = 60,
+        }
     }),
     ["coal"] = create_biter_template({
         name = "coal",
+        spawner_data = {
+            max_health = 500,
+        },
+        
         color_data = { r = 0.2, g = 0.2, b = 0.2, a = 1 },
         biter_overrides = {
-            health_multiplier = 3,
+            health_multiplier = 2,
             speed_multiplier = .4,
             damage_multiplier = 3,
-        }
+        },
+         resistance_data = {
+             impperc = 20,
+             expperc = 20,
+             fireperc = 10,
+         }
     }),
     ["stone"] = create_biter_template({
         name = "stone",
         color_data = { r = 0.95, g = 0.85, b = 0.75, a = 1 },
+        biter_data = {
+            health_multiplier = 5,
+            speed_multiplier = 0.25,
+            damage_multiplier = 1.25
+        },
+        resistance_data = {
+            impperc = 10,
+            expperc = 0,
+            elecperc = 70,
+            laserperc = 70,
+            poisperc = 70,
+        }
     }),
     ["uranium-ore"] = create_biter_template({
         name = "uranium-ore",
-        color_data = { r = 0.25, g = 0.91, b = 0.25, a = 1 }
+        color_data = { r = 0.25, g = 0.91, b = 0.25, a = 1 },
+        biter_data = {
+            health_multiplier = 3,
+            speed_multiplier = 1.1,
+            damage_multiplier = 1.75
+        },
+        unit_types = spitter_list,
+        resistance_data = {
+            elecperc = 25,
+            acidperc = 15,
+
+        }
     }
     ),
     ["crude-oil"] = create_biter_template({
@@ -277,12 +313,17 @@ resource_list = {
             max_health = 1000,
             spawning_cooldown = {8,12}
         },
+        unit_types = spitter_list,
         biter_data = {
             health_multiplier = 1.2,
-            speed_multiplier = 1.33,
+            speed_multiplier = 1.75,
             damage_multiplier = 0.75,
         },
-        color_data = { r = 0.89, g = 0.349, b = 0.588, a = 1 }
+        color_data = { r = 0.89, g = 0.349, b = 0.588, a = 1 },
+        resistance_data = {
+            fireperc = 5,
+            expperc = 25
+        }
     })
 
 }
