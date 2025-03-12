@@ -152,6 +152,18 @@ function setup_resource_biters(resource_list)
 
       biter.name = biter_res_name .. "-" .. biter_name
       biter.order = "y-" .. biter_res_name .. "-y" .. biter_name
+      if settings.startup["add-resource-to-drop-table"].value == true then
+        if resource_name.loot_name then
+          
+        
+              biter.loot = {{
+        count_max = 1,
+        count_min = 1,
+        item = resource_name.loot_name,
+        probability = settings.startup["resource-drop-rate"].value
+      }}
+        end
+     end
 
       biter.max_health = biter.max_health * health_multiplier
       biter.movement_speed = biter.movement_speed * speed_multiplier

@@ -18,6 +18,16 @@ data:extend({
 		name = "add-resource-to-drop-table",
 		order = "a2",
 		setting_type = "startup",
-		default_value = false
+		default_value = true,
+	},
+	{
+		type = "double-setting",
+		name = "resource-drop-rate",
+		order = "a2",
+		setting_type = "startup",
+		default_value = 0.1,
+		minimum_value = 0.001,
+		maximum_value = 1,
+
 	},
 })

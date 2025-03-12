@@ -178,6 +178,7 @@ generic_spawner_data = {
     color_data = {
          r = 0.3, g = 0.3, b = 0.3, a = 1
     },
+    loot_name = nil,
     biter_data = {
         health_multiplier = 1.5,
         speed_multiplier = 0.85,
@@ -188,7 +189,7 @@ generic_spawner_data = {
         max_health = 10000,
         spawning_cooldown = { 2, 3 },
         max_units = 50,
-        corpse = "atomic-nuke-shockwave"
+        corpse = "big-explosion"
     },
     resistance_data =
     {
@@ -241,6 +242,7 @@ end
 resource_list = {
     ["iron-ore"] = create_biter_template(
         {
+            loot_name = "iron-ore",
             name = "iron-ore",
             biter_data = { health_multiplier = 1.8, speed_multiplier = 0.7 },
             color_data = { r = 0.45, g = 0.6, b = 0.9, a = 1 }
@@ -249,6 +251,7 @@ resource_list = {
     ["generic"] = create_biter_template({ name = "generic" }),
 
     ["copper-ore"] = create_biter_template({
+        loot_name = "copper-ore",
         name = "copper-ore",
         unit_types = spitter_list,
         color_data = { r = 0.803, g = 0.388, b = 0.215, a = 1 },
@@ -258,6 +261,7 @@ resource_list = {
         }
     }),
     ["coal"] = create_biter_template({
+        loot_name = "coal",
         name = "coal",
         spawner_data = {
             max_health = 500,
@@ -277,6 +281,7 @@ resource_list = {
     }),
     ["stone"] = create_biter_template({
         name = "stone",
+        loot_name = "stone",
         color_data = { r = 0.95, g = 0.85, b = 0.75, a = 1 },
         biter_data = {
             health_multiplier = 5,
@@ -293,6 +298,7 @@ resource_list = {
     }),
     ["uranium-ore"] = create_biter_template({
         name = "uranium-ore",
+        loot_name = "uranium-ore",
         color_data = { r = 0.25, g = 0.91, b = 0.25, a = 1 },
         biter_data = {
             health_multiplier = 3,
