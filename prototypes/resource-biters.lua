@@ -6,10 +6,12 @@ inactive_nest.name = "inactive-spawner"
 inactive_nest.max_count_of_owned_units = 0
 data:extend({ inactive_nest })
 
+--function create_resistance_table(resistance_list)
+
 
 function create_resistance_table(physdec, physperc, expdec, expperc, aciddec, acidperc, firedec, fireperc, laserdec,
                                  laserperc, elecdec, elecperc, poisdec, poisperc, impdec, impperc)
-  local resistance_list = {
+  local resistance_table = {
     {
       type = "physical",
       decrease = physdec,
@@ -51,49 +53,118 @@ function create_resistance_table(physdec, physperc, expdec, expperc, aciddec, ac
       percent = impperc
     }
   }
-  return resistance_list
+  return resistance_table
 end
 
---default biter values
+--recolors all resource biter corpses
+function setup_biter_corpses(resource_list)
+  local resource_corpses = {}
+  for _, resource_name in pairs(resource_list) do
+    local spawner_list = resource_name.unit_types
+    for _, biter_name in pairs(spawner_list) do
+      local biter_corpse = table.deepcopy(data.raw["corpse"][biter_name .. "-corpse"])
+      if biter_corpse.animation and biter_corpse.animation.layers then
+        for _, layer in pairs(biter_corpse.animation.layers) do
+          layer.tint = resource_name.color_data
+        end
+      end
+      if biter_corpse.decay_animation and biter_corpse.decay_animation.layers then
+        for _, layer in pairs(biter_corpse.decay_animation.layers) do
+          layer.tint = resource_name.color_data
+        end
+      end
+      biter_corpse.name = resource_name.name .. "-" .. biter_name .. "-corpse"
 
-local base_small_biter = table.deepcopy(data.raw["unit"]["small-biter"])
-local base_medium_biter = table.deepcopy(data.raw["unit"]["medium-biter"])
-local base_big_biter = table.deepcopy(data.raw["unit"]["big-biter"])
-local base_behemoth_biter = table.deepcopy(data.raw["unit"]["behemoth-biter"])
-local base_small_spitter = table.deepcopy(data.raw["unit"]["small-spitter"])
-local base_medium_spitter = table.deepcopy(data.raw["unit"]["medium-spitter"])
-local base_big_spitter = table.deepcopy(data.raw["unit"]["big-spitter"])
-local base_behemoth_spitter = table.deepcopy(data.raw["unit"]["behemoth-spitter"])
+      table.insert(resource_corpses, biter_corpse)
+    end
+  end
+  data:extend(resource_corpses)
+end
 
+--create and recolor the corpses for the biter nests.
+function setup_resource_nest_corpse(resource_list)
+  local nest_corpses = {}
+  for _, resource_name in pairs(resource_list) do
+    local corpse = table.deepcopy(data.raw["corpse"]["biter-spawner-corpse"])
+
+    if corpse.animation and corpse.animation.layers then
+
+          for _, layer in pairs(corpse.animation.layers) do
+            if layer then
+              if layer.tint then
+              layer.tint = resource_name.color_data
+              end
+          
+        end
+      end
+    end
+    if corpse.decay_animation and corpse.decay_animation.layers then
+      for _, layer in pairs(corpse.decay_animation.layers) do
+        if layer then
+          layer.tint = resource_name.color_data
+        end
+      end
+    end
+    corpse.icons = {
+      tint = resource_name.color_data
+    }
+    --[[     if corpse.graphics_set and corpse.graphics_set.animations then
+      for _, animation in pairs(corpse.graphics_set.animations) do
+        if animation.layers then
+        for _, layer in pairs (animation.layers) do
+          if layer then
+            layer.tint = resource_name.color_data
+        end
+      end
+      end
+    end
+  end ]]
+
+
+
+    corpse.name = resource_name.name .. "-biter-spawner-corpse"
+
+    table.insert(nest_corpses, corpse)
+  end
+  data:extend(nest_corpses)
+end
 
 function setup_resource_biters(resource_list)
   local resource_biters = {}
   for _, resource_name in pairs(resource_list) do
     local spawner_list = biter_list
 
-
+    local r = resource_name.resistance_data
     spawner_list = resource_name.unit_types
 
     local health_multiplier = resource_name.biter_data.health_multiplier
     local speed_multiplier = resource_name.biter_data.speed_multiplier
     local damage_multiplier = resource_name.biter_data.damage_multiplier
 
+
     local biter_res_name = resource_name.name
     for _, biter_name in pairs(spawner_list) do
+      local resource_colors = resource_name.color_data
+      --create biter corpse)
       local biter = table.deepcopy(data.raw["unit"][biter_name])
+
+      biter.corpse = resource_name.name .. "-" .. biter_name .. "-corpse"
+
       biter.name = biter_res_name .. "-" .. biter_name
       biter.order = "y-" .. biter_res_name .. "-y" .. biter_name
 
       biter.max_health = biter.max_health * health_multiplier
       biter.movement_speed = biter.movement_speed * speed_multiplier
-
+      biter.resistances = create_resistance_table(r.physdec, r.physperc, r.expdec, r.expperc, r.aciddec, r.acidperc,
+        r.firedec, r.fireperc, r.laserdec,
+        r.laserperc, r.elecdec, r.elecperc, r.poisdec, r.poisperc, r.impdec, r.impperc)
 
       --set damage
       if string.find(biter_name, "biter") then
         if biter.attack_parameters and biter.attack_parameters.ammo_type then
           --set the new damage value
           local new_damage = biter.attack_parameters.ammo_type.action.action_delivery.target_effects.damage.amount *
-          damage_multiplier
+              damage_multiplier
           biter.attack_parameters.ammo_type.action.action_delivery.target_effects = {
             {
               type = "damage",
@@ -124,32 +195,27 @@ function setup_resource_biters(resource_list)
             "\", position = {0, 0}}\n\n    step_0 = function()\n      game.simulation.camera_position = {enemy.position.x, enemy.position.y - 0.5}\n      script.on_nth_tick(1, function()\n          step_0()\n      end)\n    end\n\n    step_0()\n  "
       }
       --tint the biters to match the resource color
-      local resource_colors = resource_name.color_data
-          biter.icons = {
-            {
-              icon = biter.icon,
-              icon_size = biter.icon_size,
-              tint = resource_colors
-            },
-          }
-          if biter.run_animation then
-            for _, layer in pairs(biter.run_animation.layers or { biter.run_animation }) do
-              layer.tint = resource_colors
-              if layer.hr_version then
-                layer.hr_version.tint = resource_colors
-              end
-              --layer.hd_version.tint = resource_colors
-            end
-          end
 
-          if biter.attack_parameters and biter.attack_parameters.animation then
-            for _, layer in pairs(biter.attack_parameters.animation.layers or { biter.attack_parameters.animation }) do
-              layer.tint = resource_colors
-              if layer.hr_version then
-                layer.hr_version.tint = resource_colors
-              end
-            end
-          end
+      biter.icons = {
+        {
+          icon = biter.icon,
+          icon_size = biter.icon_size,
+          tint = resource_colors
+        },
+      }
+      if biter.run_animation then
+        for _, layer in pairs(biter.run_animation.layers or { biter.run_animation }) do
+          layer.tint = resource_colors
+
+          --layer.hd_version.tint = resource_colors
+        end
+      end
+
+      if biter.attack_parameters and biter.attack_parameters.animation then
+        for _, layer in pairs(biter.attack_parameters.animation.layers or { biter.attack_parameters.animation }) do
+          layer.tint = resource_colors
+        end
+      end
 
       table.insert(resource_biters, biter)
     end
@@ -157,8 +223,6 @@ function setup_resource_biters(resource_list)
 
   data:extend(resource_biters)
 end
-
-
 
 --default active values
 local default_nest_health = 7500
@@ -190,6 +254,7 @@ data:extend({ generic_spawner })
 function setup_resource_nests(resource_list)
   local resourcespawners = {}
   for _, resource_name in pairs(resource_list) do
+    local r = resource_name.resistance_data
     --local units = set_unit_spawners(resource_name)
     local inactive_spawner = table.deepcopy(generic_spawner)
     inactive_spawner.name = "inactive-biter-spawner-" .. resource_name.name
@@ -197,17 +262,26 @@ function setup_resource_nests(resource_list)
     inactive_spawner.max_count_of_owned_units = default_inactive_max_count_of_owned_units -- Prevent spawning
     inactive_spawner.spawning_cooldown = default_inactive_nest_cooldown
     inactive_spawner.max_count_of_owned_defensive_units = default_inactive_max_count_defensive_units
-    inactive_spawner.resistances = create_resistance_table(table.unpack(resource_name.resistance_data))
+    inactive_spawner.resistances = create_resistance_table(r.physdec, r.physperc, r.expdec, r.expperc, r.aciddec,
+      r.acidperc, r.firedec, r.fireperc, r.laserdec,
+      r.laserperc, r.elecdec, r.elecperc, r.poisdec, r.poisperc, r.impdec, r.impperc)
     inactive_spawner.result_units = set_unit_spawners(resource_name.name)
     inactive_spawner.order = "y-" .. resource_name.name .. "-zc"
+    --inactive_spawner.corpse = resource_name.name .. "-biter-spawner-corpse"
+    inactive_spawner.corpse = resource_name.spawner_data.corpse
     local active_spawner = table.deepcopy(generic_spawner)
     active_spawner.name = "active-biter-spawner-" .. resource_name.name
     active_spawner.max_health = resource_name.spawner_data.max_health
     active_spawner.spawning_cooldown = resource_name.spawner_data.spawning_cooldown
     active_spawner.max_count_of_owned_units = resource_name.spawner_data.max_units
-    active_spawner.resistances = create_resistance_table(table.unpack(resource_name.resistance_data))
+    active_spawner.resistances = create_resistance_table(r.physdec, r.physperc, r.expdec, r.expperc, r.aciddec,
+      r.acidperc, r.firedec, r.fireperc, r.laserdec,
+      r.laserperc, r.elecdec, r.elecperc, r.poisdec, r.poisperc, r.impdec, r.impperc)
     active_spawner.result_units = set_unit_spawners(resource_name.name)
     active_spawner.order = "y-" .. resource_name.name .. "-zb"
+    --active_spawner.corpse = resource_name.name .. "-biter-spawner-corpse"
+    active_spawner.corpse = resource_name.spawner_data.corpse
+    
     --override default resource settings
     -- Set the tint for the spawner
     local resource_colors = resource_name.color_data
@@ -231,45 +305,35 @@ function setup_resource_nests(resource_list)
               for _, layer in pairs(animation.layers) do
                 if layer then
                   layer.tint = resource_colors
-                  if layer.hr_version then
-                    layer.hr_version.tint = resource_colors
-                  end
                 end
               end
             else
               animation.tint = resource_colors
-              if animation.hr_version then
-                animation.hr_version.tint = resource_colors
-              end
             end
           end
         else
           log("Warning: inactive_spawner.graphics_set.animations is nil. Unable to apply tint.") -- Debug message
         end
 
-        if inactive_spawner.graphics_set and inactive_spawner.graphics_set.animations then
-          for _, animation in pairs(inactive_spawner.graphics_set.animations) do
-            if animation.layers then
-              for _, layer in pairs(animation.layers) do
-                if layer then
-                  layer.tint = resource_colors
-                  if layer.hr_version then
-                    layer.hr_version.tint = resource_colors
-                  end
-                end
-              end
-            else
-              animation.tint = resource_colors
-              if animation.hr_version then
-                animation.hr_version.tint = resource_colors
-              end
+    if inactive_spawner.graphics_set and inactive_spawner.graphics_set.animations then
+      for _, animation in pairs(inactive_spawner.graphics_set.animations) do
+        if animation.layers then
+          for _, layer in pairs(animation.layers) do
+            if layer then
+              layer.tint = resource_colors
+
             end
           end
         else
-          log("Warning: inactive_spawner.graphics_set.animations is nil. Unable to apply tint.") -- Debug message
+          animation.tint = resource_colors
+
         end
-      
-    
+      end
+    else
+      log("Warning: inactive_spawner.graphics_set.animations is nil. Unable to apply tint.") -- Debug message
+    end
+
+
 
 
     table.insert(resourcespawners, inactive_spawner)
