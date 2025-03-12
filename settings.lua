@@ -13,5 +13,11 @@ data:extend({
 		setting_type = "startup",
 		default_value = true
 	},
-
+	{
+		type = "bool-setting",
+		name = "add-resource-to-drop-table",
+		order = "a2",
+		setting_type = "startup",
+		default_value = false
+	},
 })
