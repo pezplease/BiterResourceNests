@@ -2,125 +2,8 @@ require "prototypes.biter-data"
 
 --require "script.resource_nests"
 require "script.initilization"
-
---todo find all resources automatically.
-
-local function position_key(position)
-  -- Helper to create a unique key for a position
-  return string.format("%d,%d", math.floor(position.x), math.floor(position.y))
-end
-
-local function get_connected_resources(surface, start_entity)
-  -- Breadth-first search to collect all connected resource entities
-  local visited = {}
-  local to_visit = { start_entity }
-  local patch_resources = {}
-
-  while #to_visit > 0 do
-    local entity = table.remove(to_visit)
-    local pos_key = position_key(entity.position)
-
-    if not visited[pos_key] then
-      visited[pos_key] = true
-      table.insert(patch_resources, entity)
-
-      -- Find neighboring resource tiles of the same type
-      local neighbors = surface.find_entities_filtered({
-        area = {
-          { entity.position.x - 1.5, entity.position.y - 1.5 },
-          { entity.position.x + 1.5, entity.position.y + 1.5 },
-        },
-        type = "resource",
-        name = entity.name -- Ensure same resource type
-      })
-
-      for _, neighbor in pairs(neighbors) do
-        local neighbor_pos_key = position_key(neighbor.position)
-        if not visited[neighbor_pos_key] then
-          table.insert(to_visit, neighbor)
-        end
-      end
-    end
-  end
-
-  return patch_resources
-end
---create nests on resource patches on chunk generation.
-script.on_event(defines.events.on_chunk_generated, function(event)
-  local surface = event.surface
-  local area = event.area
-
-  -- Find all resources in the chunk
-  local resource_entities = surface.find_entities_filtered({
-    area = area,
-    type = "resource"
-  })
-
-  local processed = {}
-
-  for _, resource in pairs(resource_entities) do
-    local pos_key = position_key(resource.position)
-    if not processed[pos_key] then
-      -- Get all connected resources for this patch
-      local patch_resources = get_connected_resources(surface, resource)
-
-      -- Mark resources as processed
-      for _, patch_resource in pairs(patch_resources) do
-        processed[position_key(patch_resource.position)] = true
-      end
-
-      -- Calculate the geometric center of the patch
-      if #patch_resources > 0 then
-        local center_x, center_y = 0, 0
-        for _, patch_resource in pairs(patch_resources) do
-          center_x = center_x + patch_resource.position.x
-          center_y = center_y + patch_resource.position.y
-        end
-        center_x = center_x / #patch_resources
-        center_y = center_y / #patch_resources
-
-        -- Scale strength based on patch size
-        local patch_size = #patch_resources -- Ensure this variable is set
-
-      --checks to make sure the nests have sufficient spacing
-        local nest_type = "inactive-biter-spawner-generic"
-        for _, resource_table_data in pairs(resource_list) do
-          local resource_table = resource_table_data.name
-          if resource_table == resource.name then
-            nest_type = "inactive-biter-spawner-" .. resource.name
-            break
-          end
-        end
-        local surface = game.surfaces["nauvis"]
-        local nearbyresourcenests = surface.find_entities_filtered {
-          name = nest_type,
-          position = {x = center_x, y = center_y},
-          radius = 12
-        }
-        if #nearbyresourcenests == 0 then
-                  local spawned_nest = surface.create_entity({
-          name = nest_type,
-          position = { x = center_x, y = center_y },
-          force = "enemy", -- Makes it hostile
-
-        })
-        --game.print("Nest spawned at " .. center_x .. ", " .. center_y)
-        if storage.remove_patches and spawned_nest then
-          table.insert(storage.spawned_nests, {
-            entity = spawned_nest,
-            resource_name = resource.name,
-            distance = math.sqrt(center_x ^ 2 + center_y ^ 2),
-            nest_y = center_y,
-            nest_x = center_x
-          })
-        end
-
-        end
-      end
-    end
-  end
-  --deleteallstartingnests()
-end)
+require "script.patch_creation"
+require "script.nest_attack"
 
 --deals damage to the spawner when a unit is spawned
 script.on_event(defines.events.on_entity_spawned, function(event)
@@ -169,18 +52,21 @@ script.on_event(defines.events.on_player_mined_entity, function(event)
   end
 end)
 
-script.on_nth_tick(250, function()
+script.on_nth_tick(75, function()
   check_nest_activity()
   deleteallstartingnests()
 end)
-
+--check nest activity checks to see if an active nest is still being attacked,
+-- and also triggers nest attacks
 function check_nest_activity()
   if not storage.active_nests then return end
   for i, nest_info in pairs(storage.active_nests) do
     if nest_info.entity and (game.tick - nest_info.lastspawn > 600) then
       deactivate_nest(nest_info.entity)
       table.remove(storage.active_nests, i)
-    end
+    elseif nest_info.entity then
+    shoot_nest_projectile(nest_info.entity, nest_info.resource)
+  end
   end
 end
 
@@ -219,12 +105,7 @@ function activate_nest(nest, resource_mined)
   })
 
   local activate_particles = "ground-explosion"
-  --if resource_mined == "coal" then
-  --  activate_particles = "ground-explosion"
-  --elseif
-  --    resource_mined == "copper-ore" then
-  --  activate_particles = "poison-cloud"
- -- end
+
   surface.create_entity({
     name = activate_particles,
     position = nest.position,
@@ -236,7 +117,8 @@ function activate_nest(nest, resource_mined)
   --adds the activated nest to the active_nests table. will check every to see if it should go dorment.
   table.insert(storage.active_nests, {
     entity = active_nest,
-    lastspawn = game.tick
+    lastspawn = game.tick,
+    resource = resource_mined,
   })
 
   -- Destroy the inactive nest
