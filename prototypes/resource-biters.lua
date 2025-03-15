@@ -1,5 +1,5 @@
 require "prototypes.biter-data"
-require "prototypes.spitter-effects"
+
 
 local inactive_nest = table.deepcopy(data.raw["unit-spawner"]["biter-spawner"])
 inactive_nest.name = "inactive-spawner"
@@ -251,7 +251,7 @@ local default_inactive_max_count_defensive_units = 0
 
 function set_unit_spawners(resource_name)
   local result_units = specilized_biter_results(resource_name)
-  if resource_name.unit_types == "spitter_list" then
+  if resource_name.unit_types == spitter_list then
     result_units = specilized_spitter_results(resource_name)
     return result_units
   end
