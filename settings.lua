@@ -4,7 +4,7 @@ data:extend({
 		name = "starting-resource-exemption",
 		order = "a",
 		setting_type = "startup",
-		default_value = true
+		default_value = false
 	},
 	{
 		type = "bool-setting",
@@ -23,9 +23,9 @@ data:extend({
 	{
 		type = "double-setting",
 		name = "resource-drop-rate",
-		order = "a2",
+		order = "a3",
 		setting_type = "startup",
-		default_value = 0.1,
+		default_value = 0.8,
 		minimum_value = 0.001,
 		maximum_value = 1,
 
