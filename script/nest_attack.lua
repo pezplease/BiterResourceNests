@@ -6,7 +6,7 @@ function shoot_nest_projectile(spawner, resource_type)
 
     
     surface.create_entity({
-        name = "acid-stream-spitter-behemoth",
+        name = "nest-projectile-" .. resource_type,
         position = spawner.position,
         target_position = {
             spawner.position.x + math.cos(angle) * 15,

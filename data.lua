@@ -2,7 +2,7 @@ require "prototypes.biter-data"
 require "prototypes.resource-biters"
 require "prototypes.nest-attack-data"
 
---create_unique_spitter_puddle()
+setup_nest_attacks(resource_list)
 
 setup_biter_corpses(resource_list)
 --setup_resource_nest_corpse(resource_list)
