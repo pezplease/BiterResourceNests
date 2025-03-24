@@ -9,11 +9,21 @@ function shoot_nest_projectile(spawner, resource_type)
         name = "nest-projectile-" .. resource_type,
         position = spawner.position,
         target_position = {
-            spawner.position.x + math.cos(angle) * 15,
-            spawner.position.y + math.sin(angle) * 15
+            spawner.position.x + math.cos(angle) * math.random(50),
+            spawner.position.y + math.sin(angle) * math.random(50)
         },
         speed = speed,
         source = spawner,
         force = game.forces.enemy,
     })
+--[[     surface.create_entity({
+        name = "resource-puddle-" .. resource_type,
+        position = {
+            spawner.position.x + math.cos(angle) * 15,
+            spawner.position.y + math.sin(angle) * 15
+        },
+        source = spawner,
+        force = game.forces.enemy, 
+    }) ]]
+
 end

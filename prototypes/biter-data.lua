@@ -264,7 +264,7 @@ resource_list = {
         loot_name = "coal",
         name = "coal",
         spawner_data = {
-            max_health = 500,
+            max_health = 2000,
         },
         
         color_data = { r = 0.2, g = 0.2, b = 0.2, a = 1 },

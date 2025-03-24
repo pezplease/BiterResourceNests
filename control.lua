@@ -64,7 +64,7 @@ function check_nest_activity()
     if nest_info.entity and (game.tick - nest_info.lastspawn > 600) then
       deactivate_nest(nest_info.entity)
       table.remove(storage.active_nests, i)
-    elseif nest_info.entity then
+    elseif nest_info.entity.valid then --nest_info.entity then
     shoot_nest_projectile(nest_info.entity, nest_info.resource)
   end
   end
@@ -200,7 +200,8 @@ function give_player_starter_items(player)
   local surface = game.surfaces["nauvis"]
   local car = player.surface.create_entity {
     name = "car",
-    position = player.position,
+    position = { player.position.x + 55, player.position.y - 15
+    },
     force = player.force
   }
   car.insert { name = "nuclear-fuel", count = 5 } -- Add fuel to the car
