@@ -236,12 +236,6 @@ function setup_resource_biters(resource_list)
   data:extend(resource_biters)
 end
 
---default active values
-local default_nest_health = 7500
-local default_active_nest_cooldown = { 5, 10 }
-local default_active_max_count_of_owned_units = 100
-local default_resistances = create_resistance_table(10, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80, 0, 80)
-
 --default inactive values
 local default_inactive_nest_cooldown = { 999999, 999999 }
 local default_inactive_max_count_of_owned_units = 0
@@ -270,7 +264,9 @@ function setup_resource_nests(resource_list)
     --local units = set_unit_spawners(resource_name)
     local inactive_spawner = table.deepcopy(generic_spawner)
     inactive_spawner.name = "inactive-biter-spawner-" .. resource_name.name
+    --inactive_spawner.is_military_target = false
     inactive_spawner.max_health = resource_name.spawner_data.max_health
+    inactive_spawner.healing_per_tick = 100
     inactive_spawner.max_count_of_owned_units = default_inactive_max_count_of_owned_units -- Prevent spawning
     inactive_spawner.spawning_cooldown = default_inactive_nest_cooldown
     inactive_spawner.max_count_of_owned_defensive_units = default_inactive_max_count_defensive_units
