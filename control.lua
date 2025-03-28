@@ -200,13 +200,14 @@ function give_player_starter_items(player)
   local surface = game.surfaces["nauvis"]
   local car = player.surface.create_entity {
     name = "car",
-    position = { player.position.x + 55, player.position.y - 15
+    position = { player.position.x + 55, player.position.y - 5
     },
     force = player.force
   }
   car.insert { name = "nuclear-fuel", count = 5 } -- Add fuel to the car
-  player.print("You have received a car with nuclear fuel!")
   car.insert { name = "gun-turret", count = 50 }
-  car.insert { name = "firearm-magazine", count = 3000 }
-  car.insert { name = "uranium-rounds-magazine", count = 1000 }
+  car.insert { name = "firearm-magazine", count = 2000 }
+  car.insert { name = "uranium-rounds-magazine", count = 2000 }
+  car.insert { name = "stone-wall", count = 400 }
+  car.insert { name = "grenade", count = 100 }
 end
