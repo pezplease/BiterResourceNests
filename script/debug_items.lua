@@ -19,6 +19,6 @@ script.on_event(defines.events.on_player_created, function(event)
     car.insert { name = "firearm-magazine", count = 2000 }
     car.insert { name = "uranium-rounds-magazine", count = 2000 }
     car.insert { name = "stone-wall", count = 400 }
-    car.insert { name = "grenade", count = 100 }
+    car.insert { name = "cluster-grenade", count = 100 }
   end
   

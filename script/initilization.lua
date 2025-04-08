@@ -12,14 +12,17 @@ script.on_init(function()
     --["uranium-ore"] = 1,
     --["crude-oil"] = 1
   }
-  storage.remove_patches = settings.startup["starting-resource-exemption"].value
+
+  storage.mod_previously_initialized = false
+  storage.remove_patches = settings.startup["resource-nests-starting-resource-exemption"].value
   removenormalnests()
+
 end)
 
 function removenormalnests()
   local surface = game.surfaces["nauvis"]
 
-  if settings.startup["remove-normal-nests"].value then
+  if settings.startup["resource-nests-remove-normal-nests"].value == true then
     local map_settings = surface.map_gen_settings
     map_settings.autoplace_controls["enemy-base"] = { frequency = "none", size = "none", richness = "none" }
     surface.map_gen_settings = map_settings
@@ -29,8 +32,29 @@ function removenormalnests()
   end
 end
 
+function destroy_all_nests_in_starting_area()
+  if settings.startup["resource-nests-destroy-all-starting-nests"].value == true then
+  local surface = game.surfaces["nauvis"]
+  local area = {
+    { -1000, -1000 },
+    { 1000, 1000 }
+  }
 
-function deleteallstartingnests()
+  -- Find all resource nests in the starting area
+  local nests = surface.find_entities_filtered {
+    area = area,
+    type = "unit-spawner",
+  }
+
+  -- Destroy each nest found
+  for _, nest in pairs(nests) do
+    if nest.valid then
+      nest.destroy()
+    end
+  end
+end
+end
+function delete_first_resource_nest_in_list()
   if not storage.spawned_nests or not storage.remove_patches then return end
 
   --game.print("Nest amount: " .. #storage.spawned_nests)
