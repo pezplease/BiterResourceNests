@@ -1,11 +1,11 @@
 --get all resource data for the resource types
 require "prototypes.biter-data"
 
---sets up all biter storage and removes normal nests if enabled.
+--sets up all biter storage and removes normal nests if the setting is enabled.
 require "script.initilization"
 
 --checks all patches and creates nests
-require "script.patch_creation"
+require "script.patch_nest_creation"
 --triggers attacks on active nests
 require "script.nest_attack"
 --debug items to test the mod
@@ -17,9 +17,9 @@ require "script.nest_activation"
 
 --check nest activity checks to see if an active nest is still being attacked,
 -- if still under attack, will launch a projectile.
-script.on_nth_tick(75, function()
+script.on_nth_tick(35, function()
   check_nest_activity()
-  deleteallstartingnests()
+  delete_first_resource_nest_in_list()
 end)
 
 
