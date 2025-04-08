@@ -183,11 +183,11 @@ generic_spawner_data = {
     biter_data = {
         health_multiplier = 1.5,
         speed_multiplier = 0.85,
-        damage_multiplier = 1.15,
+        damage_multiplier = 1.25,
     },
     unit_types = biter_list,
     spawner_data = {
-        max_health = 10000,
+        max_health = 14000,
         spawning_cooldown = { 2, 3 },
         max_units = 50,
         corpse = "big-explosion",
@@ -195,7 +195,7 @@ generic_spawner_data = {
     },
     resistance_data =
     {
-        physdec = 10,
+        physdec = 8,
         physperc = 30,
         expdec = 0,
         expperc = 40,
@@ -271,12 +271,14 @@ resource_list = {
         damage_type = "explosion",
         loot_name = "coal",
         name = "coal",
-        
-
+        spawner_data = {
+            nest_attack = "both",
+        },
+        unit_types = spitter_list,
         color_data = { r = 0.2, g = 0.2, b = 0.2, a = 1 },
         biter_overrides = {
             health_multiplier = 2,
-            speed_multiplier = .5,
+            speed_multiplier = .55,
             damage_multiplier = 3,
         },
          resistance_data = {
@@ -289,11 +291,11 @@ resource_list = {
         name = "stone",
         damage_type = "physical",
         loot_name = "stone",
-        color_data = { r = 0.95, g = 0.85, b = 0.75, a = 1 },
+        color_data = { r = 0.99, g = 0.99, b = 0.99, a = 1 },
         biter_data = {
-            health_multiplier = 5,
+            health_multiplier = 6,
             speed_multiplier = 0.25,
-            damage_multiplier = 1.5
+            damage_multiplier = 2.5
         },
         resistance_data = {
             impperc = 10,
@@ -309,16 +311,18 @@ resource_list = {
         loot_name = "uranium-ore",
         color_data = { r = 0.25, g = 0.91, b = 0.25, a = 1 },
         biter_data = {
-            health_multiplier = 3,
-            speed_multiplier = 1.1,
-            damage_multiplier = 3
+            health_multiplier = 6,
+            speed_multiplier = 1.35,
+            damage_multiplier = 5
         },
         unit_types = spitter_list,
         resistance_data = {
+            physdec = 12,
             elecperc = 15,
             acidperc = 65,
             poisperc = 60,
             impperc = 15,
+            expperc = 15,
         },
         spawner_data = {
             nest_attack = "both",
@@ -354,3 +358,4 @@ function add_res_list_to_table(res_name, overrides)
             [res_name] = create_biter_template(overrides)
         })
 end
+

@@ -1,10 +1,10 @@
 require "prototypes.biter-data"
 
 
-local inactive_nest = table.deepcopy(data.raw["unit-spawner"]["biter-spawner"])
+--[[ local inactive_nest = table.deepcopy(data.raw["unit-spawner"]["biter-spawner"])
 inactive_nest.name = "inactive-spawner"
 inactive_nest.max_count_of_owned_units = 0
-data:extend({ inactive_nest })
+data:extend({ inactive_nest }) ]]
 
 --function create_resistance_table(resistance_list)
 
@@ -152,7 +152,7 @@ function setup_resource_biters(resource_list)
 
       biter.name = biter_res_name .. "-" .. biter_name
       biter.order = "y-" .. biter_res_name .. "-y" .. biter_name
-      if settings.startup["add-resource-to-drop-table"].value == true then
+      if settings.startup["resource-nests-add-resource-to-drop-table"].value == true then
         if resource_name.loot_name then
           
         
@@ -160,7 +160,7 @@ function setup_resource_biters(resource_list)
         count_max = 1,
         count_min = 1,
         item = resource_name.loot_name,
-        probability = settings.startup["resource-drop-rate"].value
+        probability = settings.startup["resource-nests-resource-drop-rate"].value
       }}
         end
      end
@@ -255,6 +255,7 @@ end
 local generic_spawner = table.deepcopy(data.raw["unit-spawner"]["biter-spawner"])
 generic_spawner.name = "base-resource-spawner"
 data.raw["unit-spawner"]["base-resource-spawner"] = generic_spawner
+generic_spawner.hidden_in_factoriopedia = true
 data:extend({ generic_spawner })
 
 function setup_resource_nests(resource_list)
@@ -265,6 +266,7 @@ function setup_resource_nests(resource_list)
     local inactive_spawner = table.deepcopy(generic_spawner)
     inactive_spawner.name = "inactive-biter-spawner-" .. resource_name.name
     --inactive_spawner.is_military_target = false
+    inactive_spawner.hidden_in_factoriopedia = false
     inactive_spawner.max_health = resource_name.spawner_data.max_health
     inactive_spawner.healing_per_tick = 100
     inactive_spawner.max_count_of_owned_units = default_inactive_max_count_of_owned_units -- Prevent spawning
@@ -279,6 +281,7 @@ function setup_resource_nests(resource_list)
     inactive_spawner.corpse = resource_name.spawner_data.corpse
     local active_spawner = table.deepcopy(generic_spawner)
     active_spawner.name = "active-biter-spawner-" .. resource_name.name
+    active_spawner.hidden_in_factoriopedia = false
     active_spawner.max_health = resource_name.spawner_data.max_health
     active_spawner.spawning_cooldown = resource_name.spawner_data.spawning_cooldown
     active_spawner.max_count_of_owned_units = resource_name.spawner_data.max_units

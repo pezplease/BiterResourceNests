@@ -67,7 +67,7 @@ local function create_boulder_impact(resource)
         created_effect = {
 
             type = "area",
-            radius = 5.5,         -- aoe radius
+            radius = 6.6,         -- aoe radius
             action_delivery = {
                 type = "instant",
                 target_effects = {
@@ -140,24 +140,78 @@ local function create_boulder_projectile(resource)
 end
 
 local function create_unique_spitter_puddle(resource)
-    local puddle = table.deepcopy(data.raw["fire"]["acid-splash-fire-spitter-behemoth"])
+    local puddle = table.deepcopy(data.raw["fire"]["fire-flame"])
+    puddle.type = "fire"
     puddle.name = "resource-puddle-" .. resource.name
-    puddle.damage_per_tick = { amount = (0.8 * resource.biter_data.damage_multiplier), type = resource.damage_type }
+    puddle.damage_per_tick = { amount = (1 * resource.biter_data.damage_multiplier), type = resource.damage_type }
+    puddle.maximum_spread_count = 4005       
+    puddle.spread_delay = 15             
+    puddle.spread_delay_deviation = 8
+    puddle.flame_spread_delay = 10
+    puddle.flame_spread_deviation = 15
+    puddle.spread_radius = 150
+    --puddle.burnt_patch_lifetime = 2000
+    puddle.initial_lifetime = 4300
+    puddle.initial_flame_count = 35
 
-    if puddle.pictures then
+
+    local fire_color = resource.color_data
+    if resource.name == "coal" then
+        fire_color = { 0.95, 0.95, 0.75, 1} -- makes fire more normal for coal
+    end
+    puddle.light.color = fire_color
+
+    --puddle.tint = resource.color_data
+     if puddle.pictures then
         for _, picture in pairs(puddle.pictures) do
+            if picture.tint then
+                picture.tint = fire_color
+            end
             if picture.layers then
+                --picture.scale = 1
                 for _, layer in pairs(picture.layers) do
+                    --layer.scale = 1
                     if layer.tint then
-                        layer.tint = resource.color_data
+                        layer.tint = fire_color
                     end
                 end
             end
         end
-    end
+    end 
 
     return puddle
 end
+
+--[[ local function create_unique_cluster_puddle(resource)
+
+    
+    
+    local cluster = {
+        type = "projectile",
+        name = "resource-cluster-" .. resource.name,
+        flags = { "not-on-map" },
+        acceleration = 10,
+        animation = nil,
+        action = {
+          type = "cluster",
+          cluster_count = 5,             
+          distance = 8,                  
+          distance_deviation = 1.5,
+          action_delivery = {
+            type = "instant",
+            target_effects = {
+              {
+                type = "create-fire",
+                entity_name = "resource-puddle-" .. resource.name
+              }
+            }
+          }
+        }
+      }
+      return cluster
+
+
+end ]]
 
 local function create_unique_spitter_stream(resource)
     local custom_projectile = table.deepcopy(data.raw["stream"]["acid-stream-spitter-behemoth"])
@@ -167,15 +221,11 @@ local function create_unique_spitter_stream(resource)
         custom_projectile.particle.tint = resource.color_data
     end
 
-    --if custom_projectile.initial_action then
-    --[[         for _, effect in pairs(custom_projectile.initial_action) do
-            if effect.type == "create-fire" then
-                effect.entity_name = "resource-puddle-" .. resource.name
-            end
-        end ]]
-    --end
     for _, initial in pairs(custom_projectile.initial_action) do
         for _, effect in pairs(initial.action_delivery.target_effects) do
+--[[             if effect.type == "create-entity" then 
+                effect.entity_name = "resource-cluster-" .. resource.name
+             ]]
             if effect.type == "create-fire" then
                 effect.entity_name = "resource-puddle-" .. resource.name
             end
@@ -187,7 +237,7 @@ end
 
 function setup_nest_attacks(resource_list)
     local nest_projectile_impact_list = {}
-    local nest_projectile_stream_list = {}
+    local nest_projectile_cluster_list = {}
 
 
     local nest_attack_list = {}
@@ -199,6 +249,11 @@ function setup_nest_attacks(resource_list)
     end
     data:extend(nest_projectile_impact_list)
 
+--[[ 
+    for _, resource in pairs(resource_list) do
+        table.insert(nest_projectile_cluster_list, create_unique_cluster_puddle(resource))
+    end ]]
+    --data:extend(nest_projectile_cluster_list)
     --[[     for _, resource in pairs(resource_list) do
         table.insert(nest_projectile_stream_list, create_boulder_projectile(resource))
     end ]]
