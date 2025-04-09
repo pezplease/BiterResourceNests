@@ -15,11 +15,15 @@ require "script.nest_damage"
 --checks if a player mines a resource or places a miner near a patch and activates the nest
 require "script.nest_activation"
 
---check nest activity checks to see if an active nest is still being attacked,
--- if still under attack, will launch a projectile.
+
 script.on_nth_tick(35, function()
+  --check nest activity checks to see if an active nest is still being attacked,
+-- if still under attack, will launch a projectile.
   check_nest_activity()
+  --if enabled, removes the first resource of every type that apears in the init file on the map..
   delete_first_resource_nest_in_list()
+  --if adding the mod to an existing map, will add resource nests to all uninhabited resource chunks
+  old_map_conversion()
 end)
 
 

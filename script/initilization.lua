@@ -1,6 +1,8 @@
+require "script.patch_nest_creation"
+
 script.on_init(function()
   storage.spawned_nests = {}
-  storage.last_biter_kill = 0
+  --storage.last_biter_kill = 0
   storage.active_nests = {}
   --add any resources here that you want to not have a nest spawn the first time it's encountered
   --higher numbers means more than one patch will be avoided
@@ -15,9 +17,33 @@ script.on_init(function()
 
   storage.mod_previously_initialized = false
   storage.remove_patches = settings.startup["resource-nests-starting-resource-exemption"].value
+  --old_map_conversion()
   removenormalnests()
-
 end)
+
+
+function old_map_conversion()
+  -- Check if the map was created before the mod was installed
+  if storage.mod_previously_initialized == true then return end
+
+  local surface = game.surfaces["nauvis"]
+  storage.mod_previously_initialized = true
+  for chunk in surface.get_chunks() do
+    if surface.is_chunk_generated(chunk) then
+      local area = chunk.area
+      chunk_resource_checker(area, surface)
+    end
+  end
+end
+
+--[[ script.on_load(function()
+  --if storage.mod_previously_initialized == false then
+    old_map_conversion()
+  --end
+end)
+ ]]
+
+
 
 function removenormalnests()
   local surface = game.surfaces["nauvis"]
@@ -34,26 +60,27 @@ end
 
 function destroy_all_nests_in_starting_area()
   if settings.startup["resource-nests-destroy-all-starting-nests"].value == true then
-  local surface = game.surfaces["nauvis"]
-  local area = {
-    { -1000, -1000 },
-    { 1000, 1000 }
-  }
+    local surface = game.surfaces["nauvis"]
+    local area = {
+      { -1000, -1000 },
+      { 1000,  1000 }
+    }
 
-  -- Find all resource nests in the starting area
-  local nests = surface.find_entities_filtered {
-    area = area,
-    type = "unit-spawner",
-  }
+    -- Find all resource nests in the starting area
+    local nests = surface.find_entities_filtered {
+      area = area,
+      type = "unit-spawner",
+    }
 
-  -- Destroy each nest found
-  for _, nest in pairs(nests) do
-    if nest.valid then
-      nest.destroy()
+    -- Destroy each nest found
+    for _, nest in pairs(nests) do
+      if nest.valid then
+        nest.destroy()
+      end
     end
   end
 end
-end
+
 function delete_first_resource_nest_in_list()
   if not storage.spawned_nests or not storage.remove_patches then return end
 
@@ -114,4 +141,3 @@ function delete_first_resource_nest_in_list()
     end
   end
 end
-

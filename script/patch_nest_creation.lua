@@ -43,15 +43,20 @@ local function position_key(position)
   script.on_event(defines.events.on_chunk_generated, function(event)
     local surface = event.surface
     local area = event.area
-  
+  -- if surface == "nauvis" then
+    chunk_resource_checker(area, surface)
+   --end
     -- Find all resources in the chunk
-    local resource_entities = surface.find_entities_filtered({
+
+  end)
+  
+
+  function chunk_resource_checker(area, surface)
+    local processed = {}
+      local resource_entities = surface.find_entities_filtered({
       area = area,
       type = "resource"
     })
-  
-    local processed = {}
-  
     for _, resource in pairs(resource_entities) do
       local pos_key = position_key(resource.position)
       if not processed[pos_key] then
@@ -75,9 +80,17 @@ local function position_key(position)
   
           -- Scale strength based on patch size
           local patch_size = #patch_resources -- Ensure this variable is set
-  
-        --checks to make sure the nests have sufficient spacing
-          local nest_type = "inactive-biter-spawner-generic"
+          local building_check = surface.find_entities_filtered{
+            area = {
+              { center_x - 55, center_y - 55 },
+              { center_x + 55, center_y + 55 },
+            },
+            force = "player",
+          }
+        --checks to make sure the nests have sufficient spacing, 
+        --and in the case of adding the mod to existing saves, makes sure there are not any player buildings on the nest already
+          if #building_check == 0 then
+        local nest_type = "inactive-biter-spawner-generic"
           for _, resource_table_data in pairs(resource_list) do
             local resource_table = resource_table_data.name
             if resource_table == resource.name then
@@ -111,8 +124,7 @@ local function position_key(position)
   
           end
         end
+        end
       end
     end
-    --deleteallstartingnests()
-  end)
-  
+  end
