@@ -16,7 +16,7 @@ require "script.nest_damage"
 require "script.nest_activation"
 
 
-script.on_nth_tick(35, function()
+script.on_nth_tick(25, function()
   --check nest activity checks to see if an active nest is still being attacked,
 -- if still under attack, will launch a projectile.
   check_nest_activity()

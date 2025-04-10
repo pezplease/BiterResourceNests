@@ -9,18 +9,19 @@ data:extend({
 		setting_type = "startup",
 		default_value = true
 	},
-	{type = "bool-setting",
-	name = mod_name .. "destroy-all-starting-nests",
-	order = "a1",
-	setting_type = "startup",
-	default_value = false,
-},
+	{
+		type = "bool-setting",
+		name = mod_name .. "destroy-all-starting-nests",
+		order = "a1",
+		setting_type = "startup",
+		default_value = false,
+	},
 	{
 		type = "bool-setting",
 		name = mod_name .. "remove-normal-nests",
 		order = "a2",
 		setting_type = "startup",
-		default_value = true
+		default_value = false,
 	},
 	{
 		type = "bool-setting",
@@ -46,6 +47,15 @@ data:extend({
 		setting_type = "runtime-global",
 		default_value = 1,
 		minimum_value = 0,
+		maximum_value = 10,
+	},
+	{
+		type = "double-setting",
+		name = mod_name .. "biter-health-multiplier",
+		order = "a6",
+		setting_type = "startup",
+		default_value = 1,
+		minimum_value = 0.1,
 		maximum_value = 10,
 	},
 })

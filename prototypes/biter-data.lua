@@ -187,7 +187,7 @@ generic_spawner_data = {
     },
     unit_types = biter_list,
     spawner_data = {
-        max_health = 14000,
+        max_health = 12000,
         spawning_cooldown = { 2, 3 },
         max_units = 50,
         corpse = "big-explosion",
@@ -195,7 +195,7 @@ generic_spawner_data = {
     },
     resistance_data =
     {
-        physdec = 8,
+        physdec = 7,
         physperc = 30,
         expdec = 0,
         expperc = 40,
@@ -291,6 +291,9 @@ resource_list = {
         name = "stone",
         damage_type = "physical",
         loot_name = "stone",
+        spawner_data = {
+            max_health = 9000},
+
         color_data = { r = 0.99, g = 0.99, b = 0.99, a = 1 },
         biter_data = {
             health_multiplier = 6,
@@ -349,13 +352,12 @@ resource_list = {
             expperc = 25
         }
     })
-
 }
 
 
 function add_res_list_to_table(res_name, overrides)
-        table.insert(resource_list, {
-            [res_name] = create_biter_template(overrides)
-        })
+        table.insert(resource_list,{
+            [res_name] = create_biter_template(overrides)}
+    )
 end
 

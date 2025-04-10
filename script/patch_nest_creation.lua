@@ -111,7 +111,6 @@ local function position_key(position)
             force = "enemy", -- Makes it hostile
   
           })
-          --game.print("Nest spawned at " .. center_x .. ", " .. center_y)
           if storage.remove_patches and spawned_nest then
             table.insert(storage.spawned_nests, {
               entity = spawned_nest,

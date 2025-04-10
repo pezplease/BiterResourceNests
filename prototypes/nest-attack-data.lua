@@ -67,13 +67,13 @@ local function create_boulder_impact(resource)
         created_effect = {
 
             type = "area",
-            radius = 6.6,         -- aoe radius
+            radius = 5.5,         -- aoe radius
             action_delivery = {
                 type = "instant",
                 target_effects = {
                     {
                         type = "damage",
-                        damage = { amount = (200 * resource.biter_data.damage_multiplier), type = resource.damage_type },
+                        damage = { amount = (155 * resource.biter_data.damage_multiplier), type = resource.damage_type },
                         apply_damage_to_trees = true
                     },
                     {
@@ -94,6 +94,12 @@ local function create_boulder_projectile(resource)
     local boulder_projectile = table.deepcopy(data.raw["projectile"]["grenade"])
     boulder_projectile.name = "boulder-stream-" .. resource.name
     boulder_projectile.horizontal_speed = 0.2
+    boulder_projectile.direction_only = false
+    boulder_projectile.collision_box = {{-1, -1}, {1, 1}}
+    boulder_projectile.force_condition = "not-same"
+
+
+
     --boulder_projectile.particle_horizontal_speed_deviation = 0.05
     --boulder_projectile.acceleration = -0.005  -- arc
     --boulder_projectile.spine_animation = {

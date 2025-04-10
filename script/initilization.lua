@@ -62,8 +62,8 @@ function destroy_all_nests_in_starting_area()
   if settings.startup["resource-nests-destroy-all-starting-nests"].value == true then
     local surface = game.surfaces["nauvis"]
     local area = {
-      { -1000, -1000 },
-      { 1000,  1000 }
+      { -4000, -4000 },
+      { 4000,  4000 }
     }
 
     -- Find all resource nests in the starting area
@@ -84,12 +84,10 @@ end
 function delete_first_resource_nest_in_list()
   if not storage.spawned_nests or not storage.remove_patches then return end
 
-  --game.print("Nest amount: " .. #storage.spawned_nests)
 
   local closest_nests = {}
   for resource_name, resource_count in pairs(storage.patches_to_remove) do
     if storage.patches_to_remove[resource_name] < 1 then break end
-    game.print(resource_name .. ": " .. resource_count)
   end
 
   -- Find the closest nest for each resource type
@@ -116,14 +114,8 @@ function delete_first_resource_nest_in_list()
 
   for _, closest_nest in pairs(closest_nests) do
     if closest_nest.entity and closest_nest.entity.valid then
-      --game.print("Deleting nest at " .. closest_nest.entity.position.x .. ", " .. closest_nest.entity.position.y)
       storage.patches_to_remove[closest_nest.resource_name] = storage.patches_to_remove[closest_nest.resource_name] - 1
       -- Add chart tag
-      game.forces["player"].add_chart_tag(surface, {
-        position = closest_nest.entity.position,
-        text = "Center Nest",
-        icon = { type = "item", name = "raw-fish" }
-      })
 
       -- Destroy the entity
       local radius = 44
@@ -134,7 +126,7 @@ function delete_first_resource_nest_in_list()
         },
         type = { "unit-spawner" }
       })
-      game.print("the amount of nests to remove is: " .. #nests_to_remove)
+
       for _, nest in pairs(nests_to_remove) do
         nest.destroy()
       end

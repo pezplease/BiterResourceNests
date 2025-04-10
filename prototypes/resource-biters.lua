@@ -165,7 +165,7 @@ function setup_resource_biters(resource_list)
         end
      end
 
-      biter.max_health = biter.max_health * health_multiplier
+      biter.max_health = biter.max_health * health_multiplier * settings.startup["resource-nests-biter-health-multiplier"].value
       biter.movement_speed = biter.movement_speed * speed_multiplier
       biter.resistances = create_resistance_table(r.physdec, r.physperc, r.expdec, r.expperc, r.aciddec, r.acidperc,
         r.firedec, r.fireperc, r.laserdec,

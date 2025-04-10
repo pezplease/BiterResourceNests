@@ -9,7 +9,7 @@ function check_nest_activity()
     if nest_info.entity and (game.tick - nest_info.lastspawn > 600) then
       deactivate_nest(nest_info.entity)
       table.remove(storage.active_nests, i)
-    elseif nest_info.entity.valid then   --nest_info.entity then
+    elseif nest_info.entity.valid then --nest_info.entity then
       shoot_nest_projectile(nest_info.entity, nest_info.resource)
     end
   end
@@ -29,9 +29,8 @@ function deactivate_nest(nest)
   nest.destroy()
 end
 
-function activate_nest(nest, resource_mined)
-  game.print("Nest activate function called")
-  if not nest or not nest.valid then return end
+function activate_nest(first_nest, resource_mined)
+  if not first_nest or not first_nest.valid then return end
   --local active_nest_name = "active-biter-spawner-generic"
   -- Change the spawner to the active version
   --[[   for _, resource_table_data in pairs(resource_list) do
@@ -41,38 +40,48 @@ function activate_nest(nest, resource_mined)
         break
       end
     end ]]
+
+
   --remove the "in" from the inactive nest name to get the active nest name.
-  local active_nest_name = nest.name:sub(3)
-  game.print("Nest activated at " .. nest.position.x .. ", " .. nest.position.y)
+  local active_nest_name = first_nest.name:sub(3)
   local surface = game.surfaces["nauvis"]
-  local active_nest = surface.create_entity({
-    name = active_nest_name,
-    position = nest.position,
-    force = "enemy"
+
+  local group_nests = surface.find_entities_filtered({
+    name = first_nest.name,
+    position = first_nest.position,
+    radius = 62
   })
 
-  local activate_particles = "ground-explosion"
+  for _, dorm_nest in pairs(group_nests) do
 
-  surface.create_entity({
-    name = activate_particles,
-    position = nest.position,
-    force = "enemy"
-  })
-  if not resource_mined then
-    resource_mined = active_nest_name:sub(22)
+    local active_nest = surface.create_entity({
+      name = active_nest_name,
+      position = dorm_nest.position,
+      force = "enemy"
+    })
+
+    local activate_particles = "ground-explosion"
+
+    surface.create_entity({
+      name = activate_particles,
+      position = dorm_nest.position,
+      force = "enemy"
+    })
+    if not resource_mined then
+      resource_mined = active_nest_name:sub(22)
+    end
+    --set active nest health to inactive_nest
+    active_nest.health = dorm_nest.health
+    --adds the activated nest to the active_nests table. will check every to see if it should go dorment.
+    table.insert(storage.active_nests, {
+      entity = active_nest,
+      lastspawn = game.tick,
+      resource = resource_mined,
+    })
+
+    -- Destroy the inactive nest
+    dorm_nest.destroy()
   end
-  --set active nest health to inactive_nest
-  active_nest.health = nest.health
-  --adds the activated nest to the active_nests table. will check every to see if it should go dorment.
-  table.insert(storage.active_nests, {
-    entity = active_nest,
-    lastspawn = game.tick,
-    resource = resource_mined,
-  })
-
-  -- Destroy the inactive nest
-  nest.destroy()
-
   --return active_nests
 end
 
@@ -80,7 +89,7 @@ end
 script.on_event(defines.events.on_player_mined_entity, function(event)
   local entity = event.entity
   local nest_type = "generic"
-  game.print("Entity mined: " .. entity.name)
+
   for _, resource_check_data in pairs(resource_list) do
     local resource_check = resource_check_data.name
     if resource_check == entity.name then
@@ -109,23 +118,34 @@ script.on_event({ defines.events.on_built_entity, defines.events.on_robot_built_
   local entity_name = entity.name
 
   -- Check by entity type
-  if entity_type == "mining-drill" or entity_type == "ammo-turret" or entity_type == "pumpjack" then
-    --game.print("Placed a mining drill or turret: " .. entity_name)
+  if entity_type == "ammo-turret" or entity_type == "pumpjack" then
     local nests = entity.surface.find_entities_filtered {
       type = "unit-spawner",
       position = entity.position,
       radius = 18
     }
     if #nests > 0 then
-      game.print("Found nests nearby: " .. #nests)
       for _, nest in pairs(nests) do
         if not nest.valid then return end
         if string.find(nest.name, "inactive") then
-          game.print("Found inactive nest: " .. nest.name)
-
+          activate_nest(nest)
+        end
+      end
+    end
+  elseif entity_type == "mining-drill" then
+    local nests = entity.surface.find_entities_filtered {
+      type = "unit-spawner",
+      position = entity.position,
+      radius = 30
+    }
+    if #nests > 0 then
+      for _, nest in pairs(nests) do
+        if not nest.valid then return end
+        if string.find(nest.name, "inactive") then
           activate_nest(nest)
         end
       end
     end
   end
+  
 end)
