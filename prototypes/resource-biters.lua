@@ -149,23 +149,29 @@ function setup_resource_biters(resource_list)
       local biter = table.deepcopy(data.raw["unit"][biter_name])
 
       biter.corpse = resource_name.name .. "-" .. biter_name .. "-corpse"
+      biter.max_health = biter.max_health * health_multiplier * settings.startup["resource-nests-biter-health-multiplier"].value
 
       biter.name = biter_res_name .. "-" .. biter_name
       biter.order = "y-" .. biter_res_name .. "-y" .. biter_name
       if settings.startup["resource-nests-add-resource-to-drop-table"].value == true then
         if resource_name.loot_name then
           
-        
+        local loot_count = (biter.max_health / 22) * settings.startup["resource-nests-resource-drop-amount"].value
+        if loot_count > (settings.startup["resource-nests-resource-drop-amount"].value * 25) then
+          loot_count = settings.startup["resource-nests-resource-drop-amount"].value * 25
+        end
               biter.loot = {{
-        count_max = 1,
-        count_min = 1,
+                
+        count_max = loot_count,
+        count_min = loot_count,
+        
         item = resource_name.loot_name,
         probability = settings.startup["resource-nests-resource-drop-rate"].value
       }}
         end
      end
 
-      biter.max_health = biter.max_health * health_multiplier * settings.startup["resource-nests-biter-health-multiplier"].value
+
       biter.movement_speed = biter.movement_speed * speed_multiplier
       biter.resistances = create_resistance_table(r.physdec, r.physperc, r.expdec, r.expperc, r.aciddec, r.acidperc,
         r.firedec, r.fireperc, r.laserdec,

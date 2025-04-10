@@ -248,7 +248,11 @@ resource_list = {
             loot_name = "iron-ore",
             name = "iron-ore",
             biter_data = { health_multiplier = 1.8, speed_multiplier = 0.7 },
-            color_data = { r = 0.45, g = 0.6, b = 0.9, a = 1 }
+            color_data = { r = 0.45, g = 0.6, b = 0.9, a = 1 },
+            resistance_data =
+            {
+            physdec = 4
+            },
         }),
 
     ["generic"] = create_biter_template({ name = "generic" }),
@@ -306,6 +310,7 @@ resource_list = {
             elecperc = 70,
             laserperc = 70,
             poisperc = 70,
+            physperc = 60,
         }
     }),
     ["uranium-ore"] = create_biter_template({
@@ -321,11 +326,12 @@ resource_list = {
         unit_types = spitter_list,
         resistance_data = {
             physdec = 12,
+            physperc = 40,
             elecperc = 15,
             acidperc = 65,
             poisperc = 60,
             impperc = 15,
-            expperc = 15,
+            expperc = 5,
         },
         spawner_data = {
             nest_attack = "both",
@@ -336,7 +342,7 @@ resource_list = {
         name = "crude-oil",
         damage_type = "fire",
         spawner_data = {
-            max_health = 4000,
+            max_health = 6000,
             spawning_cooldown = {8,12},
             nest_attack = "spitter",
         },

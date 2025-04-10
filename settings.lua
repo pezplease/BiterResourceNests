@@ -35,11 +35,22 @@ data:extend({
 		name = mod_name .. "resource-drop-rate",
 		order = "a4",
 		setting_type = "startup",
-		default_value = 0.5,
+		default_value = 1,
 		minimum_value = 0.001,
 		maximum_value = 1,
 
 	},
+	{
+		type = "double-setting",
+		name = mod_name .. "resource-drop-amount",
+		order = "a4-2",
+		setting_type = "startup",
+		default_value = 1,
+		minimum_value = 0.01,
+		maximum_value = 100,
+
+	},
+
 	{
 		type = "double-setting",
 		name = mod_name .. "nest-damage-taken-multiplier",

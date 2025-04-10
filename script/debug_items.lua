@@ -1,4 +1,4 @@
---[[ require "script.initilization"
+--[[  require "script.initilization"
 script.on_event(defines.events.on_player_created, function(event)
     local player = game.players[event.player_index]
     give_player_starter_items(player)
@@ -22,4 +22,4 @@ script.on_event(defines.events.on_player_created, function(event)
     car.insert { name = "cluster-grenade", count = 100 }
     car.insert { name = "stone-brick", count = 1000 }
   end
-   ]]
+    ]]

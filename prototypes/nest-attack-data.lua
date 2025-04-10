@@ -149,14 +149,13 @@ local function create_unique_spitter_puddle(resource)
     local puddle = table.deepcopy(data.raw["fire"]["fire-flame"])
     puddle.type = "fire"
     puddle.name = "resource-puddle-" .. resource.name
-    puddle.damage_per_tick = { amount = (1 * resource.biter_data.damage_multiplier), type = resource.damage_type }
+    puddle.damage_per_tick = { amount = (.85 * resource.biter_data.damage_multiplier), type = resource.damage_type }
     puddle.maximum_spread_count = 4005       
     puddle.spread_delay = 15             
     puddle.spread_delay_deviation = 8
     puddle.flame_spread_delay = 10
     puddle.flame_spread_deviation = 15
     puddle.spread_radius = 150
-    --puddle.burnt_patch_lifetime = 2000
     puddle.initial_lifetime = 4300
     puddle.initial_flame_count = 35
 
@@ -188,36 +187,6 @@ local function create_unique_spitter_puddle(resource)
     return puddle
 end
 
---[[ local function create_unique_cluster_puddle(resource)
-
-    
-    
-    local cluster = {
-        type = "projectile",
-        name = "resource-cluster-" .. resource.name,
-        flags = { "not-on-map" },
-        acceleration = 10,
-        animation = nil,
-        action = {
-          type = "cluster",
-          cluster_count = 5,             
-          distance = 8,                  
-          distance_deviation = 1.5,
-          action_delivery = {
-            type = "instant",
-            target_effects = {
-              {
-                type = "create-fire",
-                entity_name = "resource-puddle-" .. resource.name
-              }
-            }
-          }
-        }
-      }
-      return cluster
-
-
-end ]]
 
 local function create_unique_spitter_stream(resource)
     local custom_projectile = table.deepcopy(data.raw["stream"]["acid-stream-spitter-behemoth"])
