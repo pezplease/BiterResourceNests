@@ -1,5 +1,1 @@
-This mod adds a super strong custom biter nest to each resource patch (aside from the first copper, iron, stone and coal patches)
---future goals:
--Different nests/biters for each resource type
--visual effects on wave start/ nest destroyed.
--optional resource drops from each nest type. 
+This mod adds tough nests on top of each resource nest in the game that must be destroyed before the resource can be accessed. The nests lay dorment until you build too close to the nests or try to mine the resources, then it awakens and starts sending out biters and launching projectiles to tear down your defenses. Each nest has different attacks, health, damages and resistances, and different stratagies must be used to take each one out.
