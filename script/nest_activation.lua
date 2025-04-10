@@ -72,7 +72,7 @@ function activate_nest(first_nest, resource_mined)
     end
     --set active nest health to inactive_nest
     active_nest.health = dorm_nest.health
-    --adds the activated nest to the active_nests table. will check every to see if it should go dorment.
+    --adds the activated nest to the active_nests table. will check every to see if it should go Dormant.
     table.insert(storage.active_nests, {
       entity = active_nest,
       lastspawn = game.tick,
