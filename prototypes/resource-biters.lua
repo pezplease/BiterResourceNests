@@ -260,6 +260,7 @@ end
 
 local generic_spawner = table.deepcopy(data.raw["unit-spawner"]["biter-spawner"])
 generic_spawner.name = "base-resource-spawner"
+generic_spawner.autoplace = nil
 data.raw["unit-spawner"]["base-resource-spawner"] = generic_spawner
 generic_spawner.hidden_in_factoriopedia = true
 data:extend({ generic_spawner })
@@ -283,6 +284,7 @@ function setup_resource_nests(resource_list)
       r.laserperc, r.elecdec, r.elecperc, r.poisdec, r.poisperc, r.impdec, r.impperc)
     inactive_spawner.result_units = set_unit_spawners(resource_name.name)
     inactive_spawner.order = "y-" .. resource_name.name .. "-zc"
+    inactive_spawner.autoplace = nil
     --inactive_spawner.corpse = resource_name.name .. "-biter-spawner-corpse"
     inactive_spawner.corpse = resource_name.spawner_data.corpse
     local active_spawner = table.deepcopy(generic_spawner)
@@ -298,6 +300,7 @@ function setup_resource_nests(resource_list)
     active_spawner.order = "y-" .. resource_name.name .. "-zb"
     --active_spawner.corpse = resource_name.name .. "-biter-spawner-corpse"
     active_spawner.corpse = resource_name.spawner_data.corpse
+    active_spawner.autoplace = nil
     
     --override default resource settings
     -- Set the tint for the spawner

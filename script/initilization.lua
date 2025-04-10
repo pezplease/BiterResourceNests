@@ -18,7 +18,7 @@ script.on_init(function()
   storage.mod_previously_initialized = false
   storage.remove_patches = settings.startup["resource-nests-starting-resource-exemption"].value
   --old_map_conversion()
-  removenormalnests()
+  remove_normal_nests_check()
 end)
 
 
@@ -43,18 +43,25 @@ end
 end)
  ]]
 
+function remove_normal_nests()
+    local surface = game.surfaces["nauvis"]
+  local map_settings = surface.map_gen_settings
+  map_settings.autoplace_controls["enemy-base"] = { frequency = "none", size = "none", richness = "none" }
+  surface.map_gen_settings = map_settings
+  for _, entity in pairs(surface.find_entities_filtered { type = { "unit", "turret" }, force = "enemy" }) do
+    entity.destroy()
+  end
+  for _, entity in pairs(surface.find_entities_filtered { name = "biter-spawner", force = "enemy" }) do
+    entity.destroy()
+  end
+  for _, entity in pairs(surface.find_entities_filtered { name = "spitter-spawner", force = "enemy" }) do
+    entity.destroy()
+  end
+end
 
-
-function removenormalnests()
-  local surface = game.surfaces["nauvis"]
-
+function remove_normal_nests_check()
   if settings.startup["resource-nests-remove-normal-nests"].value == true then
-    local map_settings = surface.map_gen_settings
-    map_settings.autoplace_controls["enemy-base"] = { frequency = "none", size = "none", richness = "none" }
-    surface.map_gen_settings = map_settings
-    for _, entity in pairs(surface.find_entities_filtered { type = { "unit", "unit-spawner", "turret" } }) do
-      entity.destroy()
-    end
+   remove_normal_nests()
   end
 end
 
