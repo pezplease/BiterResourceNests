@@ -1,0 +1,16 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2025-04-013
+  Changes:
+    - Lowered the health, damage, and resistances of nests and biters. Reduced how often the nests launched projectiles.
+    - Resource patches will now have more nests the bigger they are and the further they are from spawn. Expect to see around one to eight nests per patch.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2025-04-011
+  Info:
+    - Updated mod thumbnail.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2025-04-011
+  Info:
+    - Released the initial version.
