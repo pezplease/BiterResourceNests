@@ -211,10 +211,10 @@ function chunk_resource_checker(chunk, surface)
         local normalized_distance = math.min(distance_from_spawn / 5500, 1.8)
         local nest_count = math.floor(nest_minimum + 16 * ((normalized_patch_size + normalized_distance) / 2))
 
-        game.print("Nest count: " ..
+--[[         game.print("Nest count: " ..
           nest_count ..
           " for patch size: " .. patch_size .. " and distance: " .. distance_from_spawn .. ". Resource:" .. resource
-          .name)
+          .name) ]]
 
         local attempts = 0
         local spawned = 0
