@@ -26,6 +26,8 @@ script.on_nth_tick(25, function()
   delete_first_resource_nest_in_list()
   --if adding the mod to an existing map, will add resource nests to all uninhabited resource chunks
   old_map_conversion()
+
+  --check_cutoff_patches_again()
 end)
 
 

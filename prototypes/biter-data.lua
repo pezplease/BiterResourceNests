@@ -181,13 +181,13 @@ generic_spawner_data = {
     damage_type = "physical",
     loot_name = nil,
     biter_data = {
-        health_multiplier = 1.5,
+        health_multiplier = 1.4,
         speed_multiplier = 0.85,
         damage_multiplier = 1.25,
     },
     unit_types = biter_list,
     spawner_data = {
-        max_health = 12000,
+        max_health = 6500,
         spawning_cooldown = { 2, 3 },
         max_units = 50,
         corpse = "big-explosion",
@@ -195,8 +195,8 @@ generic_spawner_data = {
     },
     resistance_data =
     {
-        physdec = 7,
-        physperc = 30,
+        physdec = 0,
+        physperc = 50,
         expdec = 0,
         expperc = 40,
         aciddec = 0,
@@ -296,21 +296,21 @@ resource_list = {
         damage_type = "physical",
         loot_name = "stone",
         spawner_data = {
-            max_health = 9000},
+            max_health = 4500},
 
         color_data = { r = 0.99, g = 0.99, b = 0.99, a = 1 },
         biter_data = {
-            health_multiplier = 6,
+            health_multiplier = 4.5,
             speed_multiplier = 0.25,
             damage_multiplier = 2.5
         },
         resistance_data = {
-            impperc = 10,
-            expperc = 0,
+            impperc = -10,
+            expperc = -30,
             elecperc = 70,
             laserperc = 70,
             poisperc = 70,
-            physperc = 60,
+            physperc = 55,
         }
     }),
     ["uranium-ore"] = create_biter_template({
@@ -325,7 +325,7 @@ resource_list = {
         },
         unit_types = spitter_list,
         resistance_data = {
-            physdec = 12,
+            physdec = 9,
             physperc = 40,
             elecperc = 15,
             acidperc = 65,
@@ -342,20 +342,20 @@ resource_list = {
         name = "crude-oil",
         damage_type = "fire",
         spawner_data = {
-            max_health = 6000,
-            spawning_cooldown = {8,12},
+            max_health = 4000,
+            spawning_cooldown = {15,20},
             nest_attack = "spitter",
         },
         unit_types = spitter_list,
         biter_data = {
-            health_multiplier = 1.2,
-            speed_multiplier = 1.75,
+            health_multiplier = 1.3,
+            speed_multiplier = 1.65,
             damage_multiplier = 0.75,
         },
         color_data = { r = 0.89, g = 0.349, b = 0.588, a = 1 },
         resistance_data = {
-            fireperc = 5,
-            expperc = 25
+            fireperc = -15,
+            expperc = -5,
         }
     })
 }

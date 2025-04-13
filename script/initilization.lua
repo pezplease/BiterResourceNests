@@ -2,6 +2,8 @@ require "script.patch_nest_creation"
 
 script.on_init(function()
   storage.spawned_nests = {}
+  storage.chunk_resource_spillover_check = {}
+
   --storage.last_biter_kill = 0
   storage.active_nests = {}
   --add any resources here that you want to not have a nest spawn the first time it's encountered
@@ -21,6 +23,12 @@ script.on_init(function()
   remove_normal_nests_check()
 end)
 
+script.on_configuration_changed(function(data)
+  if not storage.chunk_resource_spillover_check then
+    storage.chunk_resource_spillover_check = {}
+  end
+end)
+
 
 function old_map_conversion()
   -- Check if the map was created before the mod was installed
@@ -31,7 +39,7 @@ function old_map_conversion()
   for chunk in surface.get_chunks() do
     if surface.is_chunk_generated(chunk) then
       local area = chunk.area
-      chunk_resource_checker(area, surface)
+      chunk_resource_checker(chunk, surface)
     end
   end
 end

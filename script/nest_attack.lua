@@ -92,8 +92,8 @@ end
 --called every nth tick. random chance to actually fire when called. 
 function shoot_nest_projectile(spawner, resource_type)
     local roll = math.random()
-    if roll < 0.3 then
+    if roll < 0.16 then
         projectile_type(spawner, resource_type)
-    elseif roll >= 0.3 then
+    elseif roll >= 0.16 then
     end
 end

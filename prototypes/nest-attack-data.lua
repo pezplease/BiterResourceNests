@@ -73,7 +73,7 @@ local function create_boulder_impact(resource)
                 target_effects = {
                     {
                         type = "damage",
-                        damage = { amount = (155 * resource.biter_data.damage_multiplier), type = resource.damage_type },
+                        damage = { amount = (125 * resource.biter_data.damage_multiplier), type = resource.damage_type },
                         apply_damage_to_trees = true
                     },
                     {
@@ -149,7 +149,7 @@ local function create_unique_spitter_puddle(resource)
     local puddle = table.deepcopy(data.raw["fire"]["fire-flame"])
     puddle.type = "fire"
     puddle.name = "resource-puddle-" .. resource.name
-    puddle.damage_per_tick = { amount = (.85 * resource.biter_data.damage_multiplier), type = resource.damage_type }
+    puddle.damage_per_tick = { amount = (.65 * resource.biter_data.damage_multiplier), type = resource.damage_type }
     puddle.maximum_spread_count = 4005       
     puddle.spread_delay = 15             
     puddle.spread_delay_deviation = 8
