@@ -149,7 +149,7 @@ local function create_unique_spitter_puddle(resource)
     local puddle = table.deepcopy(data.raw["fire"]["fire-flame"])
     puddle.type = "fire"
     puddle.name = "resource-puddle-" .. resource.name
-    puddle.damage_per_tick = { amount = (.65 * resource.biter_data.damage_multiplier), type = resource.damage_type }
+    puddle.damage_per_tick = { amount = (.6 * resource.biter_data.damage_multiplier), type = resource.damage_type }
     puddle.maximum_spread_count = 4005       
     puddle.spread_delay = 15             
     puddle.spread_delay_deviation = 8
