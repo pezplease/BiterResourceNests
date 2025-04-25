@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2025-04-025
+  Changes:
+    - Nests take much longer to go dormant now.
+    - Reduced nests health and fire damage. Slightly reduced spawn rate of biters.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2025-04-013
   Changes:

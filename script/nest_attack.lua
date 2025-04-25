@@ -77,13 +77,15 @@ local function projectile_type(spawner, resource_type)
     end
 
     if resource_list[resource_type].spawner_data.nest_attack == "boulder" then
+        target_position = find_nearby_turrets(spawner)
         shoot_boulder(spawner, resource_type, target_position)
     elseif resource_list[resource_type].spawner_data.nest_attack == "spitter" then
         shoot_acid_stream(spawner, resource_type, target_position)
     elseif resource_list[resource_type].spawner_data.nest_attack == "both" then
         local roll = math.random()
         if roll <= 0.5 then
-            shoot_acid_stream(spawner, resource_type, target_position)
+            target_position = find_nearby_turrets(spawner)
+            shoot_boulder(spawner, resource_type, target_position)
         elseif roll > 0.5 then
             shoot_acid_stream(spawner, resource_type, target_position)
         end

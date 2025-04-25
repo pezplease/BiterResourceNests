@@ -187,8 +187,8 @@ generic_spawner_data = {
     },
     unit_types = biter_list,
     spawner_data = {
-        max_health = 6500,
-        spawning_cooldown = { 2, 3 },
+        max_health = 4500,
+        spawning_cooldown = { 4, 6 },
         max_units = 50,
         corpse = "big-explosion",
         nest_attack = "boulder",
@@ -296,7 +296,7 @@ resource_list = {
         damage_type = "physical",
         loot_name = "stone",
         spawner_data = {
-            max_health = 4500},
+            max_health = 3300},
 
         color_data = { r = 0.99, g = 0.99, b = 0.99, a = 1 },
         biter_data = {
@@ -342,7 +342,7 @@ resource_list = {
         name = "crude-oil",
         damage_type = "fire",
         spawner_data = {
-            max_health = 4000,
+            max_health = 3000,
             spawning_cooldown = {15,20},
             nest_attack = "spitter",
         },

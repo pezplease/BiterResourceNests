@@ -6,7 +6,7 @@ require "script.initilization"
 function check_nest_activity()
   if not storage.active_nests then return end
   for i, nest_info in pairs(storage.active_nests) do
-    if nest_info.entity and (game.tick - nest_info.lastspawn > 600) then
+    if nest_info.entity and (game.tick - nest_info.lastspawn > 1000) then
       deactivate_nest(nest_info.entity)
       table.remove(storage.active_nests, i)
     elseif nest_info.entity.valid then --nest_info.entity then
