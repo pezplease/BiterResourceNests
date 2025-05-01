@@ -117,12 +117,42 @@ local function check_all_adjacent_chunks(surface, x, y)
   return was_chunk_missing
 end
 
+--gets all nests on the supplied surface.
+function get_all_nests(surface_name)
+  -- Get all nests on the surface
+  local surface = game.surfaces[surface_name]
+  local nests = surface.find_entities_filtered({
+    type = "unit-spawner",
+  })
+  return nests
+end
+
+--check if the resource nests are on a resource patch
+function check_resource_nests(surface_name)
+  local surface = game.surfaces[surface_name]
+  local nest_check = get_all_nests("nauvis")
+  for _, nest in pairs(nest_check) do
+    if string.find(nest.name, "active") then
+      local resource_check = surface.find_entities_filtered({
+        area = {
+          { nest.position.x - 15, nest.position.y - 15 },
+          { nest.position.x + 15, nest.position.y + 15 },
+        },
+        type = "resource",
+      })
+      if resource_check and #resource_check > 0 then
+      else
+        nest.destroy()
+      end
+    end
+  end
+end
 
 function chunk_resource_checker(chunk, surface)
   local processed = {}
   local check_area = {
     --adds 32 to each side of the chunk to check for resources in the adjacent chunks
-    { chunk.area.left_top.x - 32, chunk.area.left_top.y - 32 },
+    { chunk.area.left_top.x - 32,     chunk.area.left_top.y - 32 },
     { chunk.area.right_bottom.x + 32, chunk.area.right_bottom.y + 32 },
   }
   --local check_y = chunk.position.y - 32
@@ -151,17 +181,17 @@ function chunk_resource_checker(chunk, surface)
       if chunk_touching_ungenerated then
         return  -- abort spawner placement for this patch. will be checked again when the chunk is generated.
       end]]
---[[       if already_checked then
+      --[[       if already_checked then
       else
         if patch_resources and patch_resources[1] and check_all_adjacent_chunks(surface, patch_resources[1].position.x, patch_resources[1].position.y) then
-          game.print("Chunk touches ungenerated chunks. Requesting chunk generation.") 
+          game.print("Chunk touches ungenerated chunks. Requesting chunk generation.")
           local recheck_data = {
             x = patch_resources[1].position.x,
             y = patch_resources[1].position.y,
             surface = patch_resources[1].surface,
             rechecked = false
           }
-          if recheck_data == nil then 
+          if recheck_data == nil then
           else
           table.insert(storage.chunk_resource_spillover_check, recheck_data)
           -- abort spawner placement for this patch because it touches ungenerated chunks.
@@ -211,7 +241,7 @@ function chunk_resource_checker(chunk, surface)
         local normalized_distance = math.min(distance_from_spawn / 5500, 1.8)
         local nest_count = math.floor(nest_minimum + 16 * ((normalized_patch_size + normalized_distance) / 2))
 
---[[         game.print("Nest count: " ..
+        --[[         game.print("Nest count: " ..
           nest_count ..
           " for patch size: " .. patch_size .. " and distance: " .. distance_from_spawn .. ". Resource:" .. resource
           .name) ]]

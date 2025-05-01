@@ -10,7 +10,7 @@ script.on_event(defines.events.on_entity_spawned, function(event)
   
       --deals damage to either active or inactive nests. #todo make dealing damage to inactive nests active.
       if spawner and spawner.valid and string.find(spawner.name, "active%-biter%-spawner") then
-        local damage_amount = (65 * settings.global["resource-nests-nest-damage-taken-multiplier"].value) -- Adjust the damage as needed
+        local damage_amount = (105 * settings.global["resource-nests-nest-damage-taken-multiplier"].value) -- Adjust the damage as needed
 
         spawner.damage(damage_amount, spawner.force)
         for i, nest_info in pairs(storage.active_nests) do

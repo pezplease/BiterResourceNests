@@ -200,7 +200,7 @@ generic_spawner_data = {
         expdec = 0,
         expperc = 40,
         aciddec = 0,
-        acidperc = 40,
+        acidperc = 50,
         firedec = 0,
         fireperc = 40,
         laserdec = 0,
@@ -208,7 +208,7 @@ generic_spawner_data = {
         elecdec = 0,
         elecperc = 40,
         poisdec = 0,
-        poisperc = 40,
+        poisperc = 92,
         impdec = 0,
         impperc = 40
     }
@@ -264,8 +264,8 @@ resource_list = {
         unit_types = spitter_list,
         color_data = { r = 0.803, g = 0.388, b = 0.215, a = 1 },
         resistance_data = {
-            acidperc = 80,
-            poisperc = 60,
+            acidperc = 90,
+            poisperc = 98,
         },
         spawner_data = {
             nest_attack = "both",
@@ -289,6 +289,7 @@ resource_list = {
              impperc = 20,
              expperc = 20,
              fireperc = 10,
+             poisperc = 85,
          }
     }),
     ["stone"] = create_biter_template({
@@ -305,11 +306,11 @@ resource_list = {
             damage_multiplier = 2.5
         },
         resistance_data = {
-            impperc = -10,
-            expperc = -30,
+            impperc = -40,
+            expperc = -50,
             elecperc = 70,
             laserperc = 70,
-            poisperc = 70,
+            poisperc = 98,
             physperc = 55,
         }
     }),
@@ -328,8 +329,8 @@ resource_list = {
             physdec = 9,
             physperc = 40,
             elecperc = 15,
-            acidperc = 65,
-            poisperc = 60,
+            acidperc = 99,
+            poisperc = 99,
             impperc = 15,
             expperc = 5,
         },
@@ -354,8 +355,9 @@ resource_list = {
         },
         color_data = { r = 0.89, g = 0.349, b = 0.588, a = 1 },
         resistance_data = {
-            fireperc = -15,
-            expperc = -5,
+            fireperc = -45,
+            expperc = -25,
+            poisperc = 85,
         }
     })
 }

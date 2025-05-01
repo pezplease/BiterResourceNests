@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2025-05-01
+  Changes:
+    - Added a debug command to check all resource nests to make sure theyre actually on resources.
+    - Massivly increased poison ressistances of nests and biters.
+    - slightly increased the damage nests consume when spawning biters.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 2025-04-025
   Changes:
