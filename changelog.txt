@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2025-08-07
+  Changes:
+    - Added a map option to disable the nest projectile attacks. This can be useful to prevent crashes or as a difficulty tweak.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2025-05-01
   Changes:

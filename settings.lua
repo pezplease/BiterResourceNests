@@ -61,6 +61,13 @@ data:extend({
 		maximum_value = 10,
 	},
 	{
+		type = "bool-setting",
+		name = mod_name .. "disable-nest-projectile",
+		order = "a5-2",
+		setting_type = "runtime-global",
+		default_value = false,
+	},
+	{
 		type = "double-setting",
 		name = mod_name .. "biter-health-multiplier",
 		order = "a6",
