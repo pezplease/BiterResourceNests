@@ -147,6 +147,18 @@ function check_resource_nests(surface_name)
     end
   end
 end
+local function has_water_in_3x3(surface, nestposition)
+
+    local tiles = surface.find_tiles_filtered{position = nestposition, radius = 3,
+    }
+
+    for _, tile in pairs(tiles) do
+        if string.find(tile.name, "water", 1, true) then
+            return true
+        end
+    end
+    return false
+end
 
 function chunk_resource_checker(chunk, surface)
   local processed = {}
@@ -284,12 +296,15 @@ function chunk_resource_checker(chunk, surface)
               local radius = math.random() * (3 * nest_count) + 8
               local x = center_x + math.cos(angle) * radius
               local y = center_y + math.sin(angle) * radius
-
-              local spawned_nest = surface.create_entity({
+              local placepos = {x,y}
+              local spawned_nest
+              if not has_water_in_3x3(surface, placepos) then
+              spawned_nest = surface.create_entity({
                 name = nest_type,
                 position = { x = x, y = y },
                 force = "enemy", -- Makes it hostile
               })
+            end
               if spawned_nest then
                 spawned = spawned + 1
               end
