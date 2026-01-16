@@ -242,11 +242,22 @@ function setup_resource_biters(resource_list)
   data:extend(resource_biters)
 end
 
+
+
 --default inactive values
-local default_inactive_nest_cooldown = { 999999, 999999 }
+local default_inactive_nest_cooldown = {999999,999999} 
+--{ 999999, 999999 }
 local default_inactive_max_count_of_owned_units = 0
 local default_inactive_max_count_defensive_units = 0
 
+
+if settings.startup["resource-nests-dormant-biter-spawn"].value > 0 then
+--default inactive values
+default_inactive_nest_cooldown = {200,900} 
+--{ 999999, 999999 }
+default_inactive_max_count_of_owned_units = settings.startup["resource-nests-dormant-biter-spawn"].value
+default_inactive_max_count_defensive_units = 0
+ end
 
 
 function set_unit_spawners(resource_name)
@@ -266,6 +277,8 @@ generic_spawner.hidden_in_factoriopedia = true
 data:extend({ generic_spawner })
 
 function setup_resource_nests(resource_list)
+
+
   local resourcespawners = {}
   for _, resource_name in pairs(resource_list) do
     local r = resource_name.resistance_data
@@ -276,7 +289,7 @@ function setup_resource_nests(resource_list)
     inactive_spawner.hidden_in_factoriopedia = false
     inactive_spawner.max_health = resource_name.spawner_data.max_health
     inactive_spawner.healing_per_tick = 100
-    inactive_spawner.max_count_of_owned_units = default_inactive_max_count_of_owned_units -- Prevent spawning
+    inactive_spawner.max_count_of_owned_units = default_inactive_max_count_of_owned_units
     inactive_spawner.spawning_cooldown = default_inactive_nest_cooldown
     inactive_spawner.max_count_of_owned_defensive_units = default_inactive_max_count_defensive_units
     inactive_spawner.resistances = create_resistance_table(r.physdec, r.physperc, r.expdec, r.expperc, r.aciddec,

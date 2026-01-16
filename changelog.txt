@@ -1,9 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.7
+Date: 2026-01-15
+  Changes:
+    - Added a setting to allow dormant nests to spawn biters for playstayles that want to farm resources from dormant nests.
+    - Nest projectile chance can now be tweaked for more or less frequent attacks.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.6
 Date: 2025-08-09
   Changes:
     - added a check to make sure nests don't spawn in water. 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: 2025-08-07
   Changes:
