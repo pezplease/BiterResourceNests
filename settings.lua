@@ -69,4 +69,11 @@ data:extend({
 		minimum_value = 0.1,
 		maximum_value = 10,
 	},
+		{
+		type = "bool-setting",
+		name = mod_name .. "disable-custom-worm-projectiles",
+		order = "a7",
+		setting_type = "startup",
+		default_value = false
+	},
 })

@@ -7,7 +7,8 @@ setup_nest_attacks(resource_list)
 
 setup_biter_corpses(resource_list)
 --setup_resource_nest_corpse(resource_list)
-
+setup_worm_corpses(resource_list)
+setup_resource_worms(resource_list)
 --setup all biter types for each resource, with a generic fallback nest
 setup_resource_biters(resource_list)
 

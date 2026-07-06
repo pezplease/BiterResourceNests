@@ -81,6 +81,76 @@ function setup_biter_corpses(resource_list)
   data:extend(resource_corpses)
 end
 
+function setup_worm_corpses(resource_list)
+  local worm_corpses = {}
+  local worm_list = { "small-", "medium-", "big-", "behemoth-" }
+  for _, worm_name in pairs(worm_list) do
+  for _, resource_name in pairs(resource_list) do
+    local worm_corpse = table.deepcopy(data.raw["corpse"][ worm_name.. "worm-corpse"])
+    if worm_corpse.animation and worm_corpse.animation.layers then
+      for _, layer in pairs(worm_corpse.animation.layers) do
+        layer.tint = resource_name.color_data
+      end
+    end
+    if worm_corpse.decay_animation and worm_corpse.decay_animation.layers then
+      for _, layer in pairs(worm_corpse.decay_animation.layers) do
+        layer.tint = resource_name.color_data
+      end
+    end
+    worm_corpse.name = resource_name.name .. worm_name .. "-worm-corpse"
+    table.insert(worm_corpses, worm_corpse)
+  end
+end
+  data:extend(worm_corpses)
+end
+
+function setup_resource_worms(resource_list)
+  local resource_worms = {}
+  for _, resource_name in pairs(resource_list) do
+    local worm_list = { "small-", "medium-", "big-", "behemoth-" }
+    for _, worm_name in pairs(worm_list) do
+      local worm = table.deepcopy(data.raw["unit"][worm_name .. "worm-turret"])
+      worm.name = resource_name.name .. "-" .. worm_name .. "worm-turret"
+      worm.max_health = worm.max_health * resource_name.worm_data.health_multiplier
+      worm.movement_speed = worm.movement_speed * resource_name.worm_data.speed_multiplier
+      worm.resistances = create_resistance_table(resource_name.resistance_data.physdec,
+        resource_name.resistance_data.physperc, resource_name.resistance_data.expdec,
+        resource_name.resistance_data.expperc, resource_name.resistance_data.aciddec,
+        resource_name.resistance_data.acidperc, resource_name.resistance_data.firedec,
+        resource_name.resistance_data.fireperc, resource_name.resistance_data.laserdec,
+        resource_name.resistance_data.laserperc, resource_name.resistance_data.elecdec,
+        resource_name.resistance_data.elecperc, resource_name.resistance_data.poisdec,
+        resource_name.resistance_data.poisperc, resource_name.resistance_data.impdec,
+        resource_name.resistance_data.impperc)
+
+      -- Tint the worms to match the resource color
+      local resource_colors = resource_name.color_data
+      if worm.run_animation and worm.run_animation.layers then
+        for _, layer in pairs(worm.run_animation.layers) do
+          layer.tint = resource_colors
+        end
+      end
+      worm.corpse = resource_name.name .. "-" .. worm_name .. "worm-corpse"
+      worm.order = "y-" .. resource_name.name .. "-z" .. worm_name .. "worm-turret"
+      worm.icons = {
+        {
+          icon = worm.icon,
+          icon_size = worm.icon_size,
+          tint = resource_colors
+        },
+      }
+      if worm.attack_parameters and worm.attack_parameters.animation and worm.attack_parameters.animation.layers then
+        for _, layer in pairs(worm.attack_parameters.animation.layers) do
+          layer.tint = resource_colors
+        end
+      end
+
+      table.insert(resource_worms, worm)
+    end
+  end
+  data:extend(resource_worms)
+end
+
 --create and recolor the corpses for the biter nests.
 function setup_resource_nest_corpse(resource_list)
   local nest_corpses = {}
