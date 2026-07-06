@@ -21,6 +21,7 @@ require "script.console_commands"
 script.on_nth_tick(25, function()
 --check nest activity checks to see if an active nest is still being attacked,
 -- if still under attack, will launch a projectile.
+  
   check_nest_activity()
 
   --if enabled, removes the first resource of every type that apears in the init file on the map..
